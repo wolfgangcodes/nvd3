@@ -223,7 +223,8 @@ nv.models.multiBarChart = function() {
       xAxis
         .scale(x)
         .ticks( availableWidth / 100 )
-        .tickSize(-availableHeight, 0);
+        .tickSize(-availableHeight, 0)
+        .rotateLabels(rotateLabels);
 
       g.select('.nv-x.nv-axis')
           .attr('transform', 'translate(0,' + y.range()[0] + ')');
@@ -264,12 +265,6 @@ nv.models.multiBarChart = function() {
             })
           .selectAll('text, line')
           .style('opacity', 0);
-
-      if(rotateLabels)
-        xTicks
-          .selectAll('text')
-          .attr('transform', 'rotate(' + rotateLabels + ' 0,0)')
-          .attr('text-anchor', rotateLabels > 0 ? 'start' : 'end');
       
       g.select('.nv-x.nv-axis').selectAll('g.nv-axisMaxMin text')
           .style('opacity', 1);
