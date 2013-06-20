@@ -222,7 +222,7 @@ nv.models.multiBarChart = function() {
 
       xAxis
         .scale(x)
-        .ticks( availableWidth / 100 )
+        .ticks( xAxis.ticks() || availableWidth / 100 )
         .tickSize(-availableHeight, 0)
         .rotateLabels(rotateLabels);
 
