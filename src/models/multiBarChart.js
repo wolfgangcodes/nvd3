@@ -33,7 +33,7 @@ nv.models.multiBarChart = function() {
     , noData = "No Data Available."
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'stateChange', 'changeState')
     , controlWidth = function() { return showControls ? 240 : 0 }
-    ;
+    , numTicks = null;
 
   multibar
     .stacked(false)
@@ -222,7 +222,7 @@ nv.models.multiBarChart = function() {
 
       xAxis
         .scale(x)
-        .ticks( xAxis.ticks() || availableWidth / 100 )
+        .ticks( availableWidth / 100 )
         .tickSize(-availableHeight, 0)
         .rotateLabels(rotateLabels);
 
@@ -271,7 +271,7 @@ nv.models.multiBarChart = function() {
 
       yAxis
         .scale(y)
-        .ticks( availableHeight / 36 )
+        .ticks( numTicks || availableHeight / 36 )
         .tickSize( -availableWidth, 0);
 
       d3.transition(g.select('.nv-y.nv-axis'))
@@ -489,6 +489,12 @@ nv.models.multiBarChart = function() {
   chart.noData = function(_) {
     if (!arguments.length) return noData;
     noData = _;
+    return chart;
+  };
+
+  chart.numTicks = function(_) {
+    if (!arguments.length) return numTicks;
+    numTicks = _;
     return chart;
   };
 

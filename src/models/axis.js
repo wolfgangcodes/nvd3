@@ -53,8 +53,6 @@ nv.models.axis = function() {
       var g = wrap.select('g')
 
       //------------------------------------------------------------
-
-
       if (ticks !== null)
         axis.ticks(ticks);
       else if (axis.orient() == 'top' || axis.orient() == 'bottom')
