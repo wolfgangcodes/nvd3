@@ -71,7 +71,9 @@ nv.addGraph(function() {
       .hideable(true);
 
     chart.xAxis
-        .showMaxMin(true)
+        // .showMaxMin(true)
+        .tickPadding(-5)
+        .rotateLabels(90)
         .tickFormat(d3.format(',f'));
     chart.y(function(d){return d.value})
     chart.showControls(true)
