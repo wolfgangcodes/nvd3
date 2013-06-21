@@ -31,6 +31,7 @@ nv.models.stackedAreaChart = function() {
     , noData = 'No Data Available.'
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'stateChange', 'changeState')
     , controlWidth = 250
+    , numTicks = null
     ;
 
   xAxis
@@ -235,7 +236,7 @@ nv.models.stackedAreaChart = function() {
 
       yAxis
         .scale(y)
-        .ticks(stacked.offset() == 'wiggle' ? 0 : availableHeight / 36)
+        .ticks(stacked.offset() == 'wiggle' ? 0 : (numTicks ? numTicks : availableHeight / 36)) 
         .tickSize(-availableWidth, 0)
         .setTickFormat(stacked.offset() == 'expand' ? d3.format('%') : yAxisTickFormat);
 
@@ -470,6 +471,12 @@ nv.models.stackedAreaChart = function() {
     if (!arguments.length) return yAxisTickFormat;
     yAxisTickFormat = _;
     return yAxis;
+  };
+
+  chart.numTicks = function(_) {
+    if (!arguments.length) return numTicks;
+    numTicks = _;
+    return chart;
   };
 
   //============================================================
