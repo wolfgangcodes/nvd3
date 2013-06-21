@@ -21,11 +21,12 @@ nv.models.stackedArea = function() {
     , y //can be accessed via chart.yScale()
     , scatter = nv.models.scatter()
     , dispatch =  d3.dispatch('tooltipShow', 'tooltipHide', 'areaClick', 'areaMouseover', 'areaMouseout')
-    ;
+;
 
   scatter
     .size(2.2) // default size
     .sizeDomain([2.2,2.2]) // all the same size by default
+    .forceY([0])
     ;
 
   /************************************
@@ -107,7 +108,6 @@ nv.models.stackedArea = function() {
         .height(availableHeight)
         .x(getX)
         .y(function(d) { return d.display.y + d.display.y0 })
-        .forceY([0])
         .color(data.map(function(d,i) {
           return d.color || color(d, i);
         }).filter(function(d,i) { return !data[i].disabled }));
