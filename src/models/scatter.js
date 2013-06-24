@@ -163,13 +163,14 @@ nv.models.scatter = function() {
                 // *Injecting series and point index for reference
                 /* *Adding a 'jitter' to the points, because there's an issue in d3.geom.voronoi.
                 */
-                var pX = getX(point,pointIndex) + Math.random() * 1e-7;
-                var pY = getY(point,pointIndex) + Math.random() * 1e-7;
+                var pX = getX(point,pointIndex) //+ Math.random() * 1e-7 || getX(point,pointIndex).getTime();
+                var pY = getY(point,pointIndex) //+ Math.random() * 1e-7 || getX(point,pointIndex);
 
-                return [x(pX), 
-                        y(pY), 
-                        groupIndex, 
+                ret =  [x(pX) + Math.random() * 1e-7,
+                        y(pY) + Math.random() * 1e-7,
+                        groupIndex,
                         pointIndex, point]; //temp hack to add noise untill I think of a better way so there are no duplicates
+                return ret;
               })
               .filter(function(pointArray, pointIndex) {
                 return pointActive(pointArray[4], pointIndex); // Issue #237.. move filter to after map, so pointIndex is correct!
@@ -237,10 +238,10 @@ nv.models.scatter = function() {
           pointPaths.exit().remove();
           pointPaths
               .attr('d', function(d) {
-                if (d.data.length === 0) 
+                if (d.data.length === 0)
                     return 'M 0 0'
-                else 
-                    return 'M' + d.data.join('L') + 'Z'; 
+                else
+                    return 'M' + d.data.join('L') + 'Z';
               });
 
           pointPaths
@@ -301,7 +302,7 @@ nv.models.scatter = function() {
             .selectAll('.nv-point')
               //.data(dataWithPoints)
               //.style('pointer-events', 'auto') // recativate events, disabled by css
-              .on('click', function(d,i) { 
+              .on('click', function(d,i) {
                 //nv.log('test', d, i);
                 if (needsUpdate || !data[d.series]) return 0; //check if this is a dummy point
                 var series = data[d.series],
