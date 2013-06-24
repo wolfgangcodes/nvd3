@@ -22,8 +22,9 @@ nv.models.multiBarChart = function() {
     , staggerLabels = false
     , rotateLabels = 0
     , tooltips = true
+    , keyFormatter = function (key) { return key; }
     , tooltip = function(key, x, y, e, graph) {
-        return '<h3>' + key + '</h3>' +
+        return '<h3>' + keyFormatter(key) + '</h3>' +
                '<p>' +  y + ' on ' + x + '</p>'
       }
     , x //can be accessed via chart.xScale()
@@ -246,7 +247,7 @@ nv.models.multiBarChart = function() {
           // Issue #140
           xTicks
             .selectAll("text")
-            .attr('transform', function(d,i,j) { 
+            .attr('transform', function(d,i,j) {
                 return  getTranslate(0, (j % 2 == 0 ? staggerUp : staggerDown));
               });
 
@@ -265,7 +266,7 @@ nv.models.multiBarChart = function() {
             })
           .selectAll('text, line')
           .style('opacity', 0);
-      
+
       g.select('.nv-x.nv-axis').selectAll('g.nv-axisMaxMin text')
           .style('opacity', 1);
 
@@ -485,7 +486,7 @@ nv.models.multiBarChart = function() {
     defaultState = _;
     return chart;
   };
-  
+
   chart.noData = function(_) {
     if (!arguments.length) return noData;
     noData = _;
@@ -495,6 +496,12 @@ nv.models.multiBarChart = function() {
   chart.numTicks = function(_) {
     if (!arguments.length) return numTicks;
     numTicks = _;
+    return chart;
+  };
+
+  chart.keyFormatter = function(_) {
+    if (!arguments.length) return keyFormatter;
+    keyFormatter = _;
     return chart;
   };
 
