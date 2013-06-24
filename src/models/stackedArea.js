@@ -142,6 +142,11 @@ nv.models.stackedArea = function() {
           .y1(function(d) { return y(d.display.y + d.display.y0) })
           .interpolate(interpolate);
 
+      var line = d3.svg.line()
+          .x(function(d,i)  { return x(getX(d,i)) })
+          .y(function(d) { return y(d.display.y + d.display.y0) })
+          .interpolate(interpolate);
+
       var zeroArea = d3.svg.area()
           .x(function(d,i)  { return x(getX(d,i)) })
           .y0(function(d) { return y(d.display.y0) })
@@ -189,6 +194,19 @@ nv.models.stackedArea = function() {
       //d3.transition(path)
       path
           .attr('d', function(d,i) { return area(d.values,i) })
+
+
+      var pathLine = g.select('.nv-areaWrap').selectAll('path.nv-line')
+          .data(function(d) { return d });
+      pathLine.enter().append('path').attr('class', function(d,i) { return 'nv-line nv-line-' + i })
+      pathLine.exit()
+          .attr('d', function(d,i) { return zeroArea(d.values,i) })
+          .remove();
+      pathLine
+          .style('fill', 'none')
+          .style('stroke', function(d,i){ return d.color || color(d, i) });
+      pathLine
+          .attr('d', function(d,i) { return line(d.values) })
 
 
       //============================================================
@@ -326,9 +344,9 @@ nv.models.stackedArea = function() {
 	    if (!arguments.length) return interpolate;
 	    interpolate = _;
 	    return interpolate;
-  
+
   };
-  
+
   //============================================================
 
 

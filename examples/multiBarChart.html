@@ -80,7 +80,7 @@ nv.addGraph(function() {
 
     chart.yAxis
         .tickFormat(d3.format(',.1f'));
-
+    chart.delay(0)
     d3.select('#chart1 svg')
         .datum(negative_test_data)
       .transition().duration(500).call(chart);
