@@ -19,8 +19,9 @@ nv.models.stackedAreaChart = function() {
     , showControls = true
     , showLegend = true
     , tooltips = true
+    , keyFormatter = function (key) { return key; }
     , tooltip = function(key, x, y, e, graph) {
-        return '<h3>' + key + '</h3>' +
+        return '<h3>' + keyFormatter(key) + '</h3>' +
                '<p>' +  y + ' on ' + x + '</p>'
       }
     , x //can be accessed via chart.xScale()
@@ -236,7 +237,7 @@ nv.models.stackedAreaChart = function() {
 
       yAxis
         .scale(y)
-        .ticks(stacked.offset() == 'wiggle' ? 0 : (numTicks ? numTicks : availableHeight / 36)) 
+        .ticks(stacked.offset() == 'wiggle' ? 0 : (numTicks ? numTicks : availableHeight / 36))
         .tickSize(-availableWidth, 0)
         .setTickFormat(stacked.offset() == 'expand' ? d3.format('%') : yAxisTickFormat);
 
@@ -478,7 +479,11 @@ nv.models.stackedAreaChart = function() {
     numTicks = _;
     return chart;
   };
-
+  chart.keyFormatter = function(_) {
+    if (!arguments.length) return keyFormatter;
+    keyFormatter = _;
+    return chart;
+  };
   //============================================================
 
   return chart;
