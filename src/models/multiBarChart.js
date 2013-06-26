@@ -23,8 +23,9 @@ nv.models.multiBarChart = function() {
     , rotateLabels = 0
     , tooltips = true
     , keyFormatter = function (key) { return key; }
+    , keyValueFormatter = function (key) { return key; }
     , tooltip = function(key, x, y, e, graph) {
-        return '<h3>' + keyFormatter(key) + '</h3>' +
+        return '<h3>' + key + '</h3>' +
                '<p>' +  y + ' on ' + x + '</p>'
       }
     , x //can be accessed via chart.xScale()
@@ -63,12 +64,12 @@ nv.models.multiBarChart = function() {
     var left = e.pos[0] + ( offsetElement.offsetLeft || 0 ),
         top = e.pos[1] + ( offsetElement.offsetTop || 0),
         x = xAxis.tickFormat()(multibar.x()(e.point, e.pointIndex)),
-        y = yAxis.tickFormat()(multibar.y()(e.point, e.pointIndex)),
-        content = tooltip(e.series.key, x, y, e, chart);
+        y = keyValueFormatter(multibar.y()(e.point, e.pointIndex)),
+        key = keyFormatter(e.series.key),
+        content = tooltip(key, x, y, e, chart);
 
     nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
   };
-
   //============================================================
 
 
@@ -504,7 +505,11 @@ nv.models.multiBarChart = function() {
     keyFormatter = _;
     return chart;
   };
-
+  chart.keyValueFormatter = function(_) {
+    if (!arguments.length) return keyValueFormatter;
+    keyValueFormatter = _;
+    return chart;
+  };
   //============================================================
 
 

@@ -20,8 +20,9 @@ nv.models.stackedAreaChart = function() {
     , showLegend = true
     , tooltips = true
     , keyFormatter = function (key) { return key; }
+    , keyValueFormatter = function (d) { return d; }
     , tooltip = function(key, x, y, e, graph) {
-        return '<h3>' + keyFormatter(key) + '</h3>' +
+        return '<h3>' + key + '</h3>' +
                '<p>' +  y + ' on ' + x + '</p>'
       }
     , x //can be accessed via chart.xScale()
@@ -60,8 +61,9 @@ nv.models.stackedAreaChart = function() {
     var left = e.pos[0] + ( offsetElement.offsetLeft || 0 ),
         top = e.pos[1] + ( offsetElement.offsetTop || 0),
         x = xAxis.tickFormat()(stacked.x()(e.point, e.pointIndex)),
-        y = yAxis.tickFormat()(stacked.y()(e.point, e.pointIndex)),
-        content = tooltip(e.series.key, x, y, e, chart);
+        y = keyValueFormatter(stacked.y()(e.point, e.pointIndex)),
+        key = keyFormatter(e.series.key),
+        content = tooltip(key, x, y, e, chart);
 
     nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
   };
@@ -232,7 +234,7 @@ nv.models.stackedAreaChart = function() {
           .attr('transform', 'translate(0,' + availableHeight + ')');
       //d3.transition(g.select('.nv-x.nv-axis'))
       g.select('.nv-x.nv-axis')
-        .transition().duration(0)
+        .transition().duration(10)
           .call(xAxis);
 
       yAxis
@@ -482,6 +484,11 @@ nv.models.stackedAreaChart = function() {
   chart.keyFormatter = function(_) {
     if (!arguments.length) return keyFormatter;
     keyFormatter = _;
+    return chart;
+  };
+  chart.keyValueFormatter = function(_) {
+    if (!arguments.length) return keyValueFormatter;
+    keyValueFormatter = _;
     return chart;
   };
   //============================================================

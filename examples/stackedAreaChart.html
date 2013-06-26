@@ -37,8 +37,18 @@ text {
 <script>
 
 
-var histcatexplong = [{"key":"users","values":[{"week":"2013-03-25T00:00:00Z","users":2669},{"week":"2013-04-01T00:00:00Z","users":3355},{"week":"2013-04-08T00:00:00Z","users":3629},{"week":"2013-04-15T00:00:00Z","users":3414},{"week":"2013-04-22T00:00:00Z","users":3413},{"week":"2013-04-29T00:00:00Z","users":3558},{"week":"2013-05-06T00:00:00Z","users":3556},{"week":"2013-05-13T00:00:00Z","users":3474},{"week":"2013-05-20T00:00:00Z","users":3511},{"week":"2013-05-27T00:00:00Z","users":3167},{"week":"2013-06-03T00:00:00Z","users":3315},{"week":"2013-06-10T00:00:00Z","users":3147},{"week":"2013-06-17T00:00:00Z","users":3369},{"week":"2013-06-24T00:00:00Z","users":584}],"valueTotal":44161}]
-
+var histcatexplong = [{"key":"users","values":[]}]
+function makeData(x, y, numDataPoints){
+  var ret = []
+  var today = new Date().getTime()
+  for(var i = 0; i < numDataPoints; i++){
+    var datum = {}
+    datum[x] = today + i * 7 * 24 * 60 * 60 * 1000
+    datum[y] = Math.floor(Math.random() * 10000)
+    ret.push(datum)
+  }
+  return ret;
+}
 
 var colors = d3.scale.category20();
 keyColor = function(d, i) {return colors(d.key)};
@@ -46,6 +56,8 @@ keyColor = function(d, i) {return colors(d.key)};
 var chart;
 var x = 'week';
 var y = 'users';
+histcatexplong[0].values = makeData(x, y, 50)
+
 nv.addGraph(function() {
   chart = nv.models.stackedAreaChart()
                 .x(function(d) { return new Date(d[x]) })
@@ -60,7 +72,6 @@ nv.addGraph(function() {
       .tickFormat(d3.format(',.2f'));
 
   chart.yAxis.showMaxMin(false);
-  chart.forceY([0, 200]);
   chart.numTicks(5);
 
   d3.select('#chart1')
