@@ -40,10 +40,8 @@ nv.models.stackedArea = function() {
    *   'inside-out' (stream)
    *   'default' (input order)
    ************************************/
-
+  var _yDomain = scatter.yDomain()
   //============================================================
-
-
   function chart(selection) {
     selection.each(function(data) {
       var availableWidth = width - margin.left - margin.right,
@@ -70,6 +68,11 @@ nv.models.stackedArea = function() {
                return aseries;
              });
 
+      if(offset === 'expand'){
+        scatter.yDomain([0,1]);
+      }else{
+        scatter.yDomain(_yDomain);
+      }
 
       data = d3.layout.stack()
                .order(order)
@@ -346,6 +349,12 @@ nv.models.stackedArea = function() {
 	    interpolate = _;
 	    return interpolate;
 
+  };
+  chart.yDomain = function(_) {
+    if (!arguments.length) return scatter.yDomain;
+    _yDomain = _;
+    scatter.yDomain(_);
+    return chart;
   };
 
   //============================================================

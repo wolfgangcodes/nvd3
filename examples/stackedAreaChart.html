@@ -37,7 +37,7 @@ text {
 <script>
 
 
-var histcatexplong = [{"key":"users","values":[]}]
+var histcatexplong = [{"key":"users","values":[]},{"key":"sessions","values":[]}]
 function makeData(x, y, numDataPoints){
   var ret = []
   var today = new Date().getTime()
@@ -57,6 +57,7 @@ var chart;
 var x = 'week';
 var y = 'users';
 histcatexplong[0].values = makeData(x, y, 50)
+histcatexplong[1].values = makeData(x, y, 50)
 
 nv.addGraph(function() {
   chart = nv.models.stackedAreaChart()
@@ -74,6 +75,8 @@ nv.addGraph(function() {
   chart.yAxis.showMaxMin(false);
   chart.numTicks(5);
   chart.stacked.clipRadius(100000000)
+  chart.forceY([0,20000])
+  // chart.yDomain([0,20000])
   d3.select('#chart1')
     .datum(histcatexplong)
       .transition().duration(500).call(chart);
