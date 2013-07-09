@@ -75,7 +75,7 @@ nv.models.multiBar = function() {
                  .y(getY)
                  .out(function(d, y0, y) {
                     d.y0 = y0
-                    d.y = stacked && expanded ? y : d._y;
+                    d.y = stacked && expanded ? y : d._y || d.y;
                   })
                 (data);
       }
@@ -95,7 +95,7 @@ nv.models.multiBar = function() {
               f.y1 = negBase;
               negBase = negBase - f.size;
             } else
-            { 
+            {
               f.y1 = f.size + posBase;
               posBase = posBase + f.size;
             }
@@ -109,9 +109,9 @@ nv.models.multiBar = function() {
       var seriesData = (xDomain && yDomain) ? [] : // if we know xDomain and yDomain, no need to calculate
             data.map(function(d) {
               return d.values.map(function(d,i) {
-                if(d._y === undefined) 
+                if(d._y === undefined)
                   d._y = getY(d);
-                if(!expanded) 
+                if(!expanded)
                   d.y = d._y
 
                 return { x: getX(d,i), y: getY(d,i), y0: d.y0, y1: d.y1 }
@@ -123,7 +123,7 @@ nv.models.multiBar = function() {
 
       y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return stacked ? (d.y > 0 ? d.y1 : d.y1 + d.y ) : d.y }).concat(forceY)))
             .range([availableHeight, 0]);
-        
+
       // If scale's domain don't have a range, slightly adjust to make one... so a chart can show a single data point
       if (x.domain()[0] === x.domain()[1] || y.domain()[0] === y.domain()[1]) singlePoint = true;
       if (x.domain()[0] === x.domain()[1])

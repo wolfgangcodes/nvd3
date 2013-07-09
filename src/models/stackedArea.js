@@ -95,6 +95,7 @@ nv.models.stackedArea = function() {
       var gEnter = wrapEnter.append('g');
       var g = wrap.select('g');
 
+      gEnter.append('g').attr('class', 'nv-lineWrap');
       gEnter.append('g').attr('class', 'nv-areaWrap');
       gEnter.append('g').attr('class', 'nv-scatterWrap');
 
@@ -196,7 +197,7 @@ nv.models.stackedArea = function() {
           .attr('d', function(d,i) { return area(d.values,i) })
 
 
-      var pathLine = g.select('.nv-areaWrap').selectAll('path.nv-line')
+      var pathLine = g.select('.nv-lineWrap').selectAll('path.nv-line')
           .data(function(d) { return d });
       pathLine.enter().append('path').attr('class', function(d,i) { return 'nv-line nv-line-' + i })
       pathLine.exit()

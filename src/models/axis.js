@@ -110,28 +110,36 @@ nv.models.axis = function() {
           var xLabelMargin = 36;
           var maxTextWidth = 30;
           var xTicks = g.selectAll('g').select("text");
-          if (rotateLabels%360) {
-            //Calculate the longest xTick width
-            xTicks.each(function(d,i){
-              var width = this.getBBox().width;
-              if(width > maxTextWidth) maxTextWidth = width;
-            });
-            //Convert to radians before calculating sin. Add 30 to margin for healthy padding.
-            var sin = Math.abs(Math.sin(rotateLabels*Math.PI/180));
-            var xLabelMargin = (sin ? sin*maxTextWidth : maxTextWidth)+30;
-            //Rotate all xTicks
-            xTicks
-              .attr('transform', function(d,i,j) { return 'rotate(' + rotateLabels + ' 0,0), translate('+(rotateLabels?5:0)+',0)' })
-              .attr('text-anchor', rotateLabels%360 > 0 ? 'start' : 'end');
+
+          //Calculate the longest xTick width
+          xTicks.each(function(d,i){
+            var width = this.getBBox().width;
+            if(width > maxTextWidth) maxTextWidth = width;
+          });
+          var anchor = 'middle';
+          if(rotateLabels === 0){
+            anchor = 'middle'
+            xTranslate = 0
+          }else{
+            anchor = rotateLabels%360 > 0 ? 'start' : 'end'
+            xTranslate = -5
           }
+
+          //Convert to radians before calculating sin. Add 30 to margin for healthy padding.
+          var sin = Math.abs(Math.sin(rotateLabels*Math.PI/180));
+          var xLabelMargin = (sin ? sin*maxTextWidth : maxTextWidth)+30;
+
+          xTicks
+            .attr('transform', function(d,i,j) { return 'rotate(' + (rotateLabels) + ',0,0), translate('+(xTranslate)+',0)' })
+            .attr('text-anchor', anchor);
+
           axisLabel.enter().append('text').attr('class', 'nv-axislabel');
           var w = (scale.range().length==2) ? scale.range()[1] : (scale.range()[scale.range().length-1]+(scale.range()[1]-scale.range()[0]));
           axisLabel
-              .attr('text-anchor', 'middle')
               .attr('y', xLabelMargin)
               .attr('x', w/2);
           if (showMaxMin) {
-          //if (showMaxMin && !isOrdinal) {
+
             var axisMaxMin = wrap.selectAll('g.nv-axisMaxMin')
                            //.data(scale.domain())
                            .data([scale.domain()[0], scale.domain()[scale.domain().length - 1]]);
@@ -145,7 +153,7 @@ nv.models.axis = function() {
                 .attr('dy', '.71em')
                 .attr('y', axis.tickPadding())
                 .attr('transform', function(d,i,j) { return 'rotate(' + rotateLabels + ' 0,0)' })
-                .attr('text-anchor', rotateLabels ? (rotateLabels%360 > 0 ? 'start' : 'end') : 'middle')
+                .attr('text-anchor', anchor)
                 .text(function(d,i) {
                   var v = fmt(d);
                   return ('' + v).match('NaN') ? '' : v;
@@ -251,7 +259,7 @@ nv.models.axis = function() {
               if (scale(d) < scale.range()[1] + 10 || scale(d) > scale.range()[0] - 10) { // 10 is assuming text height is 16... if d is 0, leave it!
                 if (d > 1e-10 || d < -1e-10) // accounts for minor floating point errors... though could be problematic if the scale is EXTREMELY SMALL
                   d3.select(this).attr('opacity', 0);
-                
+
                 d3.select(this).select('text').attr('opacity', 0); // Don't remove the ZERO line!!
               }
             });

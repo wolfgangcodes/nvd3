@@ -73,7 +73,7 @@ nv.addGraph(function() {
 
   chart.yAxis.showMaxMin(false);
   chart.numTicks(5);
-
+  chart.stacked.clipRadius(100000000)
   d3.select('#chart1')
     .datum(histcatexplong)
       .transition().duration(500).call(chart);
