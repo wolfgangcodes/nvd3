@@ -24,6 +24,7 @@ nv.models.multiBar = function() {
     , delay = 1200
     , xDomain
     , yDomain
+    , _yDomain
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
     ;
 
@@ -38,8 +39,6 @@ nv.models.multiBar = function() {
       ;
 
   //============================================================
-
-
   function chart(selection) {
     selection.each(function(data) {
       var availableWidth = width - margin.left - margin.right,
@@ -67,6 +66,11 @@ nv.models.multiBar = function() {
 
       if(stacked){
         var offset = expanded ? 'expand' : 'zero'
+        if(expanded){
+          yDomain = [0,1];
+        }else{
+          yDomain = _yDomain;
+        }
         data = d3.layout.stack()
                  .order('default')
                  .offset(offset)
@@ -382,6 +386,7 @@ nv.models.multiBar = function() {
   chart.yDomain = function(_) {
     if (!arguments.length) return yDomain;
     yDomain = _;
+    _yDomain = _;
     return chart;
   };
 

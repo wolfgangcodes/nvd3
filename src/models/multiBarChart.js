@@ -35,7 +35,9 @@ nv.models.multiBarChart = function() {
     , noData = "No Data Available."
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'stateChange', 'changeState')
     , controlWidth = function() { return showControls ? 240 : 0 }
-    , numTicks = null;
+    , numTicks = null
+    , yAxisTickFormat = d3.format(',.2f')
+    ;
 
   multibar
     .stacked(false)
@@ -274,7 +276,9 @@ nv.models.multiBarChart = function() {
       yAxis
         .scale(y)
         .ticks( numTicks || availableHeight / 36 )
-        .tickSize( -availableWidth, 0);
+        .tickSize( -availableWidth, 0)
+        .setTickFormat(multibar.expanded() ? d3.format('%') : yAxisTickFormat);
+
 
       d3.transition(g.select('.nv-y.nv-axis'))
           .call(yAxis);
@@ -509,6 +513,14 @@ nv.models.multiBarChart = function() {
     if (!arguments.length) return keyValueFormatter;
     keyValueFormatter = _;
     return chart;
+  };
+
+  yAxis.setTickFormat = yAxis.tickFormat;
+
+  yAxis.tickFormat = function(_) {
+    if (!arguments.length) return yAxisTickFormat;
+    yAxisTickFormat = _;
+    return yAxis;
   };
   //============================================================
 
