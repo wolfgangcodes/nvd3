@@ -50,6 +50,9 @@ nv.models.pieChart = function() {
     opts.x = xAxis.tickFormat()(pie.x()(e.point, e.pointIndex));
     opts.y = keyValueFormatter(pie.y()(e.point, e.pointIndex));
     opts.key = keyFormatter(e.series.key);
+    opts.chart = chart;
+    opts.data = e;
+    opts.event = e;
 
     nv.tooltip.show([opts.left, opts.top], tooltip(opts), e.value < 0 ? 'n' : 's', null, offsetElement);
   };
