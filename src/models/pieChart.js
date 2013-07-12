@@ -14,10 +14,11 @@ nv.models.pieChart = function() {
     , showLegend = true
     , color = nv.utils.defaultColor()
     , tooltips = true
-    , tooltip = function(key, y, e, graph) {
-        return '<h3>' + key + '</h3>' +
-               '<p>' +  y + '</p>'
+    , tooltip = function(opts) {
+        return '<h3>' + opts.key + '</h3>' +
+               '<p>' +  opts.y + '</p>'
       }
+    , keyValueFormatter = function (d) { return d; }
     , state = {}
     , defaultState = null
     , noData = "No Data Available."
@@ -41,6 +42,17 @@ nv.models.pieChart = function() {
     nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
   };
 
+  var showTooltip = function(e, offsetElement) {
+    var opts = {};
+
+    opts.left = e.pos[0] + ( offsetElement.offsetLeft || 0 );
+    opts.top = e.pos[1] + ( offsetElement.offsetTop || 0);
+    opts.x = xAxis.tickFormat()(pie.x()(e.point, e.pointIndex));
+    opts.y = keyValueFormatter(pie.y()(e.point, e.pointIndex));
+    opts.key = keyFormatter(e.series.key);
+
+    nv.tooltip.show([opts.left, opts.top], tooltip(opts), e.value < 0 ? 'n' : 's', null, offsetElement);
+  };
   //============================================================
 
 
@@ -266,6 +278,12 @@ nv.models.pieChart = function() {
     return chart;
   };
 
+  chart.tooltip = function(_) {
+    if (!arguments.length) return tooltip;
+    tooltip = _;
+    return chart;
+  };
+
   chart.tooltips = function(_) {
     if (!arguments.length) return tooltips;
     tooltips = _;
@@ -293,6 +311,11 @@ nv.models.pieChart = function() {
   chart.noData = function(_) {
     if (!arguments.length) return noData;
     noData = _;
+    return chart;
+  };
+  chart.keyValueFormatter = function(_) {
+    if (!arguments.length) return keyValueFormatter;
+    keyValueFormatter = _;
     return chart;
   };
 
