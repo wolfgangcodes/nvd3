@@ -1,4 +1,5 @@
 
+
 nv.models.scatter = function() {
 
   //============================================================
@@ -246,7 +247,7 @@ nv.models.scatter = function() {
 
           pointPaths
               .on('click', function(d) {
-                if (needsUpdate) return 0;
+                if (needsUpdate || !data[d.series]) return 0;
                 var series = data[d.series],
                     point  = series.values[d.point];
 
@@ -259,7 +260,7 @@ nv.models.scatter = function() {
                 });
               })
               .on('mouseover', function(d) {
-                if (needsUpdate) return 0;
+                if (needsUpdate || !data[d.series]) return 0;
                 var series = data[d.series],
                     point  = series.values[d.point];
 
@@ -272,7 +273,7 @@ nv.models.scatter = function() {
                 });
               })
               .on('mouseout', function(d, i) {
-                if (needsUpdate) return 0;
+                if (needsUpdate || !data[d.series]) return 0;
                 var series = data[d.series],
                     point  = series.values[d.point];
 

@@ -31,17 +31,6 @@ nv.models.pieChart = function() {
   //============================================================
   // Private Variables
   //------------------------------------------------------------
-
-  var showTooltip = function(e, offsetElement) {
-    var tooltipLabel = pie.description()(e.point) || pie.x()(e.point)
-    var left = e.pos[0] + ( (offsetElement && offsetElement.offsetLeft) || 0 ),
-        top = e.pos[1] + ( (offsetElement && offsetElement.offsetTop) || 0),
-        y = pie.valueFormat()(pie.y()(e.point)),
-        content = tooltip(tooltipLabel, y, e, chart);
-
-    nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
-  };
-
   var showTooltip = function(e, offsetElement) {
     var opts = {};
 
@@ -50,17 +39,17 @@ nv.models.pieChart = function() {
     opts.x = pie.x()(e.point, e.pointIndex);
     opts.y = keyValueFormatter(pie.y()(e.point, e.pointIndex));
     opts.chart = chart;
-    opts.data = e;
+    opts.data = seriesData[e.pointIndex] ;
     opts.event = e;
 
     nv.tooltip.show([opts.left, opts.top], tooltip(opts), e.value < 0 ? 'n' : 's', null, offsetElement);
   };
   //============================================================
 
-
+  var seriesData = []
   function chart(selection) {
     selection.each(function(data) {
-      var seriesData = pie.values()(data[0])
+      seriesData = pie.values()(data[0])
       var container = d3.select(this),
           that = this;
 
