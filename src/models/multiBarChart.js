@@ -67,9 +67,8 @@ nv.models.multiBarChart = function() {
 
     opts.left = e.pos[0] + ( offsetElement.offsetLeft || 0 );
     opts.top = e.pos[1] + ( offsetElement.offsetTop || 0);
-    opts.x = xAxis.tickFormat()(multibar.x()(e.point, e.pointIndex));
+    opts.x = multibar.x()(e.point, e.pointIndex);
     opts.y = keyValueFormatter(multibar.y()(e.point, e.pointIndex));
-    opts.key = keyFormatter(e.series.key);
     opts.chart = chart;
     opts.data = e.series;
     opts.event = e;

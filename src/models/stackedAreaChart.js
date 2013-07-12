@@ -64,7 +64,6 @@ nv.models.stackedAreaChart = function() {
     opts.top = e.pos[1] + ( offsetElement.offsetTop || 0);
     opts.x = xAxis.tickFormat()(stacked.x()(e.point, e.pointIndex));
     opts.y = keyValueFormatter(stacked.y()(e.point, e.pointIndex));
-    opts.key = keyFormatter(e.series.key);
     opts.chart = chart;
     opts.data = e.series;
     opts.event = e;

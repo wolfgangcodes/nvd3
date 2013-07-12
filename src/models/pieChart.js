@@ -45,11 +45,10 @@ nv.models.pieChart = function() {
   var showTooltip = function(e, offsetElement) {
     var opts = {};
 
-    opts.left = e.pos[0] + ( offsetElement.offsetLeft || 0 );
-    opts.top = e.pos[1] + ( offsetElement.offsetTop || 0);
-    opts.x = xAxis.tickFormat()(pie.x()(e.point, e.pointIndex));
+    opts.left = e.pos[0] + ( (offsetElement && offsetElement.offsetLeft) || 0 );
+    opts.top = e.pos[1] + ( (offsetElement && offsetElement.offsetTop) || 0);
+    opts.x = pie.x()(e.point, e.pointIndex);
     opts.y = keyValueFormatter(pie.y()(e.point, e.pointIndex));
-    opts.key = keyFormatter(e.series.key);
     opts.chart = chart;
     opts.data = e;
     opts.event = e;
