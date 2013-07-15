@@ -189,15 +189,17 @@ nv.models.stackedArea = function() {
             });
           })
       //d3.transition(path.exit())
+      var getColor = function(d, i){
+        var c = d.color || color(d, i);
+        return d.disabled ? 'none' : c;
+      }
       path.exit()
           .attr('d', function(d,i) { return zeroArea(d.values,i) })
           .remove();
       path
-          .style('fill', function(d,i){ return d.color || color(d, i) })
-          .style('stroke', function(d,i){ return d.color || color(d, i) });
-      //d3.transition(path)
-      path
-          .attr('d', function(d,i) { return area(d.values,i) })
+          .style('fill', getColor)
+          .style('stroke', 'none')
+          .attr('d', function(d,i) { return area(d.values,i) });
 
 
       var pathLine = g.select('.nv-lineWrap').selectAll('path.nv-line')
@@ -208,9 +210,8 @@ nv.models.stackedArea = function() {
           .remove();
       pathLine
           .style('fill', 'none')
-          .style('stroke', function(d,i){ return d.color || color(d, i) });
-      pathLine
-          .attr('d', function(d,i) { return line(d.values) })
+          .style('stroke', getColor)
+          .attr('d', function(d,i) { return line(d.values) });
 
 
       //============================================================

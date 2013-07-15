@@ -142,8 +142,8 @@ nv.models.pie = function() {
               });
 
         slices
-            .attr('fill', function(d,i) { return color(d, i); })
-            .attr('stroke', function(d,i) { return color(d, i); });
+            .attr('fill', function(d,i) { return d.data.color || color(d, i); })
+            .attr('stroke', function(d,i) { return d.data.color || color(d, i); });
 
         var paths = ae.append('path')
             .each(function(d) { this._current = d; });
@@ -157,7 +157,7 @@ nv.models.pie = function() {
         if (showLabels) {
           // This does the normal label
           var labelsArc = d3.svg.arc().innerRadius(0);
-          
+
           if (pieLabelsOutside){ labelsArc = arc; }
 
           if (donutLabelsOutside) { labelsArc = d3.svg.arc().outerRadius(arc.outerRadius()); }
@@ -312,7 +312,7 @@ nv.models.pie = function() {
     getY = d3.functor(_);
     return chart;
   };
-  
+
   chart.description = function(_) {
     if (!arguments.length) return getDescription;
     getDescription = _;
@@ -324,7 +324,7 @@ nv.models.pie = function() {
     showLabels = _;
     return chart;
   };
-  
+
   chart.labelSunbeamLayout = function(_) {
     if (!arguments.length) return labelSunbeamLayout;
     labelSunbeamLayout = _;
@@ -336,7 +336,7 @@ nv.models.pie = function() {
     donutLabelsOutside = _;
     return chart;
   };
-  
+
   chart.pieLabelsOutside = function(_) {
     if (!arguments.length) return pieLabelsOutside;
     pieLabelsOutside = _;
@@ -348,7 +348,7 @@ nv.models.pie = function() {
     donut = _;
     return chart;
   };
-  
+
   chart.donutRatio = function(_) {
     if (!arguments.length) return donutRatio;
     donutRatio = _;
@@ -390,13 +390,13 @@ nv.models.pie = function() {
     labelThreshold = _;
     return chart;
   };
-  
+
   chart.donutHoleLabel = function(_) {
     if (!arguments.length) return donutHoleLabel;
     donutHoleLabel = _;
     return chart;
   };
-  
+
   chart.showDonutHoleLabel = function(_) {
     if (!arguments.length) return showDonutHoleLabel;
     showDonutHoleLabel = _;
