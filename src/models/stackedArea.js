@@ -61,8 +61,11 @@ nv.models.stackedArea = function() {
       // ***Also storing getY(d,i) as stackedY so that it can be set to 0 if series is disabled
       data = data.map(function(aseries, i) {
                aseries.values = aseries.values.map(function(d, j) {
+                 var y =  getY(d,j);
                  d.index = j;
-                 d.stackedY = aseries.disabled ? 0 : getY(d,j);
+                 d.stackedY = aseries.disabled ? 0 :y;
+                 d.display = { y:y, y0:0};
+
                  return d;
                })
                return aseries;
@@ -73,20 +76,21 @@ nv.models.stackedArea = function() {
       }else{
         scatter.yDomain(_yDomain);
       }
-
-      data = d3.layout.stack()
-               .order(order)
-               .offset(offset)
-               .values(function(d) { return d.values })  //TODO: make values customizeable in EVERY model in this fashion
-               .x(getX)
-               .y(function(d) { return d.stackedY })
-               .out(function(d, y0, y) {
-                  d.display = {
-                    y: y,
-                   y0: y0
-                  };
-                })
-              (data);
+      if(offset !== 'line'){
+        data = d3.layout.stack()
+                 .order(order)
+                 .offset(offset)
+                 .values(function(d) { return d.values })  //TODO: make values customizeable in EVERY model in this fashion
+                 .x(getX)
+                 .y(function(d) { return d.stackedY })
+                 .out(function(d, y0, y) {
+                    d.display = {
+                      y: y,
+                     y0: y0
+                    };
+                  })
+                (data);
+      }
 
 
       //------------------------------------------------------------
@@ -338,6 +342,10 @@ nv.models.stackedArea = function() {
           break;
       case 'expand':
         chart.offset('expand');
+        chart.order('default');
+        break;
+      case 'line':
+        chart.offset('line');
         chart.order('default');
         break;
     }

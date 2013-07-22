@@ -32,7 +32,7 @@ nv.models.stackedAreaChart = function() {
     , defaultState = null
     , noData = 'No Data Available.'
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'stateChange', 'changeState')
-    , controlWidth = 250
+    , controlWidth = 350
     , numTicks = null
     ;
 
@@ -181,12 +181,13 @@ nv.models.stackedAreaChart = function() {
         var controlsData = [
           { key: 'Stacked', disabled: stacked.offset() != 'zero' },
           { key: 'Stream', disabled: stacked.offset() != 'wiggle' },
-          { key: 'Expanded', disabled: stacked.offset() != 'expand' }
+          { key: 'Expanded', disabled: stacked.offset() != 'expand' },
+          { key: 'Line', disabled: stacked.offset() != 'line' }
         ];
 
         controls
           .width( controlWidth )
-          .color(['#444', '#444', '#444']);
+          .color(['#444', '#444', '#444', '#444']);
 
         g.select('.nv-controlsWrap')
             .datum(controlsData)
@@ -219,7 +220,6 @@ nv.models.stackedAreaChart = function() {
 
       var stackedWrap = g.select('.nv-stackedWrap')
           .datum(data);
-      //d3.transition(stackedWrap).call(stacked);
       stackedWrap.call(stacked);
 
       //------------------------------------------------------------
@@ -234,10 +234,7 @@ nv.models.stackedAreaChart = function() {
         .tickSize( -availableHeight, 0);
 
       g.select('.nv-x.nv-axis')
-          .attr('transform', 'translate(0,' + availableHeight + ')');
-      //d3.transition(g.select('.nv-x.nv-axis'))
-      g.select('.nv-x.nv-axis')
-        // .transition().duration(10)
+          .attr('transform', 'translate(0,' + availableHeight + ')')
           .call(xAxis);
 
       yAxis
@@ -246,9 +243,7 @@ nv.models.stackedAreaChart = function() {
         .tickSize(-100000, -100000, -100000)
         .setTickFormat(stacked.offset() == 'expand' ? d3.format('%') : yAxisTickFormat);
 
-      //d3.transition(g.select('.nv-y.nv-axis'))
       g.select('.nv-y.nv-axis')
-        // .transition().duration(0)
           .call(yAxis)
           .selectAll('.tick')
           .attr('x1', -10000)
@@ -275,8 +270,6 @@ nv.models.stackedAreaChart = function() {
         state.disabled = data.map(function(d) { return !!d.disabled });
         dispatch.stateChange(state);
 
-        //selection.transition().call(chart);
-        // chart(selection);
         chart.update()
       });
 
@@ -293,8 +286,6 @@ nv.models.stackedAreaChart = function() {
         state.disabled = data.map(function(d) { return !!d.disabled });
         dispatch.stateChange(state);
 
-        //selection.transition().call(chart);
-        //chart(selection);
         chart.update()
       });
 
@@ -317,13 +308,14 @@ nv.models.stackedAreaChart = function() {
           case 'Expanded':
             stacked.style('expand');
             break;
+          case 'Line':
+            stacked.style('line');
+            break;
         }
 
         state.style = stacked.style();
         dispatch.stateChange(state);
 
-        //selection.transition().call(chart);
-        //chart(selection);
         chart.update()
       });
 
