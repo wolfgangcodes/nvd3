@@ -200,10 +200,14 @@ nv.models.stackedArea = function() {
       path.exit()
           .attr('d', function(d,i) { return zeroArea(d.values,i) })
           .remove();
-      path
-          .style('fill', getColor)
-          .style('stroke', 'none')
-          .attr('d', function(d,i) { return area(d.values,i) });
+      if(offset !== 'line'){
+        path
+            .style('fill', getColor)
+            .style('stroke', 'none')
+            .attr('d', function(d,i) { return area(d.values,i) });
+      }else{
+        path.style('fill','none')
+      }
 
 
       var pathLine = g.select('.nv-lineWrap').selectAll('path.nv-line')
