@@ -237,20 +237,22 @@ nv.models.stackedAreaChart = function() {
           .attr('transform', 'translate(0,' + availableHeight + ')');
       //d3.transition(g.select('.nv-x.nv-axis'))
       g.select('.nv-x.nv-axis')
-        .transition().duration(10)
+        // .transition().duration(10)
           .call(xAxis);
 
       yAxis
         .scale(y)
         .ticks(stacked.offset() == 'wiggle' ? 0 : (numTicks ? numTicks : availableHeight / 36))
-        .tickSize(-availableWidth, 0)
+        .tickSize(-100000, -100000, -100000)
         .setTickFormat(stacked.offset() == 'expand' ? d3.format('%') : yAxisTickFormat);
 
       //d3.transition(g.select('.nv-y.nv-axis'))
       g.select('.nv-y.nv-axis')
-        .transition().duration(0)
-          .call(yAxis);
-
+        // .transition().duration(0)
+          .call(yAxis)
+          .selectAll('.tick')
+          .attr('x1', -10000)
+          .attr('x2', 10000);
       //------------------------------------------------------------
 
 

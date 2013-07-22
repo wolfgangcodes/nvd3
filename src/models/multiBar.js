@@ -182,8 +182,6 @@ nv.models.multiBar = function() {
 
       groups.exit()
         .selectAll('rect.nv-bar')
-        .transition()
-        .delay(function(d,i) { return i * delay/ data[0].values.length })
           .attr('y', function(d) { return stacked ? y0(d.y0) : y0(0) })
           .attr('height', 0)
           .remove();
@@ -191,8 +189,7 @@ nv.models.multiBar = function() {
           .attr('class', function(d,i) { return 'nv-group nv-series-' + i })
           .classed('hover', function(d) { return d.hover })
           .style('fill', function(d,i){ return color(d, i) })
-          .style('stroke', function(d,i){ return color(d, i) });
-      d3.transition(groups)
+          .style('stroke', function(d,i){ return color(d, i) })
           .style('stroke-opacity', 1)
           .style('fill-opacity', .75);
 
@@ -268,18 +265,14 @@ nv.models.multiBar = function() {
       if (barColor) {
         if (!disabled) disabled = data.map(function() { return true });
         bars
-          //.style('fill', barColor)
-          //.style('stroke', barColor)
-          //.style('fill', function(d,i,j) { return d3.rgb(barColor(d,i)).darker(j).toString(); })
-          //.style('stroke', function(d,i,j) { return d3.rgb(barColor(d,i)).darker(j).toString(); })
           .style('fill', function(d,i,j) { return d3.rgb(barColor(d,i)).darker(  disabled.map(function(d,i) { return i }).filter(function(d,i){ return !disabled[i]  })[j]   ).toString(); })
           .style('stroke', function(d,i,j) { return d3.rgb(barColor(d,i)).darker(  disabled.map(function(d,i) { return i }).filter(function(d,i){ return !disabled[i]  })[j]   ).toString(); });
       }
 
 
       if (stacked)
-            bars.transition()
-            .delay(function(d,i) { return i * delay / data[0].values.length })
+            bars
+
             .attr('y', function(d,i) {
 
               return y((stacked ? d.y1 : 0));
@@ -287,34 +280,26 @@ nv.models.multiBar = function() {
             .attr('height', function(d,i) {
               return Math.max(Math.abs(y(d.y + (stacked ? d.y0 : 0)) - y((stacked ? d.y0 : 0))),1);
             })
-            .each('end', function() {
-              d3.transition(d3.select(this))
-                .attr('x', function(d,i) {
+            .attr('x', function(d,i) {
                   return stacked ? 0 : (d.series * x.rangeBand() / data.length )
                 })
-                .attr('width', x.rangeBand() / (stacked ? 1 : data.length) );
-            })
+            .attr('width', x.rangeBand() / (stacked ? 1 : data.length) );
       else
-        d3.transition(bars)
-          .delay(function(d,i) { return i * delay/ data[0].values.length })
+            bars
             .attr('x', function(d,i) {
               return d.series * x.rangeBand() / data.length
             })
             .attr('width', x.rangeBand() / data.length)
-            .each('end', function() {
-              d3.transition(d3.select(this))
-                .attr('y', function(d,i) {
+            .attr('y', function(d,i) {
                   return getY(d,i) < 0 ?
                           y(0) :
                           y(0) - y(getY(d,i)) < 1 ?
                             y(0) - 1 :
                           y(getY(d,i)) || 0;
               })
-              .attr('height', function(d,i) {
+            .attr('height', function(d,i) {
                   return Math.max(Math.abs(y(getY(d,i)) - y(0)),1) || 0;
                 });
-            })
-
 
       //store old scales for use in transitions on update
       x0 = x.copy();

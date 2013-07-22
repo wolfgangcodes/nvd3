@@ -43,24 +43,7 @@ text {
 <script src="stream_layers.js"></script>
 <script>
 
-var test_data = stream_layers(3,10+Math.random()*100,.1).map(function(data, i) {
-//var test_data = stream_layers(3,1,.1).map(function(data, i) { //for testing single data point
-  return {
-    key: 'Stream' + i,
-    values: data
-  };
-});
-
-var negative_test_data = new d3.range(0,3).map(function(d,i) { return {
-  key: 'Stream' + i,
-  values: new d3.range(0,5).map( function(f,j) {
-    return { 
-             value: Math.random()*1000,
-             x: j
-           }
-  })
-  };  
-});
+var data = [{"key":"Key_25","values":[{"x":"Cols # 26","y":97,"dimensionTotal":2666},{"x":"Cols # 10","y":3,"dimensionTotal":2685},{"x":"Cols # 44","y":49,"dimensionTotal":2697},{"x":"Cols # 30","y":98,"dimensionTotal":2703},{"x":"Cols # 49","y":6,"dimensionTotal":2711},{"x":"Cols # 35","y":71,"dimensionTotal":2716},{"x":"Cols # 16","y":4,"dimensionTotal":2725},{"x":"Cols # 37","y":22,"dimensionTotal":2735},{"x":"Cols # 13","y":1,"dimensionTotal":2756},{"x":"Cols # 25","y":38,"dimensionTotal":2821},{"x":"others","y":2137,"dimensionTotal":0}],"seriesTotal":2526},{"key":"Key_29","values":[{"x":"Cols # 26","y":17,"dimensionTotal":2666},{"x":"Cols # 10","y":31,"dimensionTotal":2685},{"x":"Cols # 44","y":92,"dimensionTotal":2697},{"x":"Cols # 30","y":45,"dimensionTotal":2703},{"x":"Cols # 49","y":63,"dimensionTotal":2711},{"x":"Cols # 35","y":70,"dimensionTotal":2716},{"x":"Cols # 16","y":48,"dimensionTotal":2725},{"x":"Cols # 37","y":67,"dimensionTotal":2735},{"x":"Cols # 13","y":7,"dimensionTotal":2756},{"x":"Cols # 25","y":90,"dimensionTotal":2821},{"x":"others","y":1997,"dimensionTotal":0}],"seriesTotal":2527},{"key":"Key_49","values":[{"x":"Cols # 26","y":25,"dimensionTotal":2666},{"x":"Cols # 10","y":71,"dimensionTotal":2685},{"x":"Cols # 44","y":44,"dimensionTotal":2697},{"x":"Cols # 30","y":34,"dimensionTotal":2703},{"x":"Cols # 49","y":87,"dimensionTotal":2711},{"x":"Cols # 35","y":1,"dimensionTotal":2716},{"x":"Cols # 16","y":86,"dimensionTotal":2725},{"x":"Cols # 37","y":74,"dimensionTotal":2735},{"x":"Cols # 13","y":19,"dimensionTotal":2756},{"x":"Cols # 25","y":83,"dimensionTotal":2821},{"x":"others","y":2005,"dimensionTotal":0}],"seriesTotal":2529},{"key":"Key_13","values":[{"x":"Cols # 26","y":86,"dimensionTotal":2666},{"x":"Cols # 10","y":70,"dimensionTotal":2685},{"x":"Cols # 44","y":89,"dimensionTotal":2697},{"x":"Cols # 30","y":99,"dimensionTotal":2703},{"x":"Cols # 49","y":44,"dimensionTotal":2711},{"x":"Cols # 35","y":72,"dimensionTotal":2716},{"x":"Cols # 16","y":70,"dimensionTotal":2725},{"x":"Cols # 37","y":38,"dimensionTotal":2735},{"x":"Cols # 13","y":79,"dimensionTotal":2756},{"x":"Cols # 25","y":22,"dimensionTotal":2821},{"x":"others","y":1872,"dimensionTotal":0}],"seriesTotal":2541},{"key":"Key_43","values":[{"x":"Cols # 26","y":64,"dimensionTotal":2666},{"x":"Cols # 10","y":43,"dimensionTotal":2685},{"x":"Cols # 44","y":1,"dimensionTotal":2697},{"x":"Cols # 30","y":40,"dimensionTotal":2703},{"x":"Cols # 49","y":53,"dimensionTotal":2711},{"x":"Cols # 35","y":33,"dimensionTotal":2716},{"x":"Cols # 16","y":9,"dimensionTotal":2725},{"x":"Cols # 37","y":78,"dimensionTotal":2735},{"x":"Cols # 13","y":72,"dimensionTotal":2756},{"x":"Cols # 25","y":16,"dimensionTotal":2821},{"x":"others","y":2139,"dimensionTotal":0}],"seriesTotal":2548},{"key":"Key_35","values":[{"x":"Cols # 26","y":5,"dimensionTotal":2666},{"x":"Cols # 10","y":15,"dimensionTotal":2685},{"x":"Cols # 44","y":11,"dimensionTotal":2697},{"x":"Cols # 30","y":92,"dimensionTotal":2703},{"x":"Cols # 49","y":16,"dimensionTotal":2711},{"x":"Cols # 35","y":25,"dimensionTotal":2716},{"x":"Cols # 16","y":91,"dimensionTotal":2725},{"x":"Cols # 37","y":50,"dimensionTotal":2735},{"x":"Cols # 13","y":25,"dimensionTotal":2756},{"x":"Cols # 25","y":72,"dimensionTotal":2821},{"x":"others","y":2168,"dimensionTotal":0}],"seriesTotal":2570},{"key":"Key_14","values":[{"x":"Cols # 26","y":32,"dimensionTotal":2666},{"x":"Cols # 10","y":54,"dimensionTotal":2685},{"x":"Cols # 44","y":19,"dimensionTotal":2697},{"x":"Cols # 30","y":16,"dimensionTotal":2703},{"x":"Cols # 49","y":4,"dimensionTotal":2711},{"x":"Cols # 35","y":85,"dimensionTotal":2716},{"x":"Cols # 16","y":77,"dimensionTotal":2725},{"x":"Cols # 37","y":22,"dimensionTotal":2735},{"x":"Cols # 13","y":97,"dimensionTotal":2756},{"x":"Cols # 25","y":61,"dimensionTotal":2821},{"x":"others","y":2109,"dimensionTotal":0}],"seriesTotal":2576},{"key":"Key_19","values":[{"x":"Cols # 26","y":51,"dimensionTotal":2666},{"x":"Cols # 10","y":61,"dimensionTotal":2685},{"x":"Cols # 44","y":19,"dimensionTotal":2697},{"x":"Cols # 30","y":95,"dimensionTotal":2703},{"x":"Cols # 49","y":83,"dimensionTotal":2711},{"x":"Cols # 35","y":84,"dimensionTotal":2716},{"x":"Cols # 16","y":17,"dimensionTotal":2725},{"x":"Cols # 37","y":36,"dimensionTotal":2735},{"x":"Cols # 13","y":34,"dimensionTotal":2756},{"x":"Cols # 25","y":88,"dimensionTotal":2821},{"x":"others","y":2020,"dimensionTotal":0}],"seriesTotal":2588},{"key":"Key_5","values":[{"x":"Cols # 26","y":83,"dimensionTotal":2666},{"x":"Cols # 10","y":96,"dimensionTotal":2685},{"x":"Cols # 44","y":15,"dimensionTotal":2697},{"x":"Cols # 30","y":39,"dimensionTotal":2703},{"x":"Cols # 49","y":56,"dimensionTotal":2711},{"x":"Cols # 35","y":26,"dimensionTotal":2716},{"x":"Cols # 16","y":32,"dimensionTotal":2725},{"x":"Cols # 37","y":57,"dimensionTotal":2735},{"x":"Cols # 13","y":56,"dimensionTotal":2756},{"x":"Cols # 25","y":45,"dimensionTotal":2821},{"x":"others","y":2122,"dimensionTotal":0}],"seriesTotal":2627},{"key":"Key_27","values":[{"x":"Cols # 26","y":78,"dimensionTotal":2666},{"x":"Cols # 10","y":9,"dimensionTotal":2685},{"x":"Cols # 44","y":59,"dimensionTotal":2697},{"x":"Cols # 30","y":95,"dimensionTotal":2703},{"x":"Cols # 49","y":16,"dimensionTotal":2711},{"x":"Cols # 35","y":59,"dimensionTotal":2716},{"x":"Cols # 16","y":24,"dimensionTotal":2725},{"x":"Cols # 37","y":39,"dimensionTotal":2735},{"x":"Cols # 13","y":34,"dimensionTotal":2756},{"x":"Cols # 25","y":88,"dimensionTotal":2821},{"x":"others","y":2206,"dimensionTotal":0}],"seriesTotal":2707},{"key":"Key_16","values":[{"x":"Cols # 26","y":78,"dimensionTotal":2666},{"x":"Cols # 10","y":55,"dimensionTotal":2685},{"x":"Cols # 44","y":45,"dimensionTotal":2697},{"x":"Cols # 30","y":80,"dimensionTotal":2703},{"x":"Cols # 49","y":50,"dimensionTotal":2711},{"x":"Cols # 35","y":29,"dimensionTotal":2716},{"x":"Cols # 16","y":34,"dimensionTotal":2725},{"x":"Cols # 37","y":87,"dimensionTotal":2735},{"x":"Cols # 13","y":91,"dimensionTotal":2756},{"x":"Cols # 25","y":51,"dimensionTotal":2821},{"x":"others","y":2113,"dimensionTotal":0}],"seriesTotal":2713},{"key":"Key_46","values":[{"x":"Cols # 26","y":27,"dimensionTotal":2666},{"x":"Cols # 10","y":48,"dimensionTotal":2685},{"x":"Cols # 44","y":13,"dimensionTotal":2697},{"x":"Cols # 30","y":69,"dimensionTotal":2703},{"x":"Cols # 49","y":4,"dimensionTotal":2711},{"x":"Cols # 35","y":63,"dimensionTotal":2716},{"x":"Cols # 16","y":69,"dimensionTotal":2725},{"x":"Cols # 37","y":12,"dimensionTotal":2735},{"x":"Cols # 13","y":88,"dimensionTotal":2756},{"x":"Cols # 25","y":23,"dimensionTotal":2821},{"x":"others","y":2312,"dimensionTotal":0}],"seriesTotal":2728},{"key":"Key_22","values":[{"x":"Cols # 26","y":85,"dimensionTotal":2666},{"x":"Cols # 10","y":78,"dimensionTotal":2685},{"x":"Cols # 44","y":49,"dimensionTotal":2697},{"x":"Cols # 30","y":23,"dimensionTotal":2703},{"x":"Cols # 49","y":83,"dimensionTotal":2711},{"x":"Cols # 35","y":57,"dimensionTotal":2716},{"x":"Cols # 16","y":51,"dimensionTotal":2725},{"x":"Cols # 37","y":84,"dimensionTotal":2735},{"x":"Cols # 13","y":83,"dimensionTotal":2756},{"x":"Cols # 25","y":45,"dimensionTotal":2821},{"x":"others","y":2159,"dimensionTotal":0}],"seriesTotal":2797},{"key":"Key_41","values":[{"x":"Cols # 26","y":80,"dimensionTotal":2666},{"x":"Cols # 10","y":98,"dimensionTotal":2685},{"x":"Cols # 44","y":63,"dimensionTotal":2697},{"x":"Cols # 30","y":92,"dimensionTotal":2703},{"x":"Cols # 49","y":96,"dimensionTotal":2711},{"x":"Cols # 35","y":31,"dimensionTotal":2716},{"x":"Cols # 16","y":92,"dimensionTotal":2725},{"x":"Cols # 37","y":85,"dimensionTotal":2735},{"x":"Cols # 13","y":85,"dimensionTotal":2756},{"x":"Cols # 25","y":90,"dimensionTotal":2821},{"x":"others","y":2018,"dimensionTotal":0}],"seriesTotal":2830},{"key":"Key_20","values":[{"x":"Cols # 26","y":28,"dimensionTotal":2666},{"x":"Cols # 10","y":97,"dimensionTotal":2685},{"x":"Cols # 44","y":76,"dimensionTotal":2697},{"x":"Cols # 30","y":97,"dimensionTotal":2703},{"x":"Cols # 49","y":93,"dimensionTotal":2711},{"x":"Cols # 35","y":87,"dimensionTotal":2716},{"x":"Cols # 16","y":64,"dimensionTotal":2725},{"x":"Cols # 37","y":69,"dimensionTotal":2735},{"x":"Cols # 13","y":93,"dimensionTotal":2756},{"x":"Cols # 25","y":65,"dimensionTotal":2821},{"x":"others","y":2189,"dimensionTotal":0}],"seriesTotal":2958},{"key":"others","values":[{"x":"Cols # 26","y":1830,"dimensionTotal":2666},{"x":"Cols # 10","y":1856,"dimensionTotal":2685},{"x":"Cols # 44","y":2053,"dimensionTotal":2697},{"x":"Cols # 30","y":1689,"dimensionTotal":2703},{"x":"Cols # 49","y":1957,"dimensionTotal":2711},{"x":"Cols # 35","y":1923,"dimensionTotal":2716},{"x":"Cols # 16","y":1957,"dimensionTotal":2725},{"x":"Cols # 37","y":1915,"dimensionTotal":2735},{"x":"Cols # 13","y":1892,"dimensionTotal":2756},{"x":"Cols # 25","y":1944,"dimensionTotal":2821},{"x":"others","y":64168,"dimensionTotal":0}],"seriesTotal":83184}]
 
 var chart;
 nv.addGraph(function() {
@@ -70,22 +53,23 @@ nv.addGraph(function() {
     chart.multibar
       .hideable(true);
 
-    chart.xAxis
-        // .showMaxMin(true)
-        .tickPadding(-5)
-        .rotateLabels(90)
-        .tickFormat(d3.format(',f'));
-    chart.y(function(d){return d.value})
+    chart.tooltip(function (opts){
+      console.log(opts)
+      return opts.data.key +' : '+ opts.y +' on '+opts.x;
+    });
+    chart.stacked(true)
+    chart.x(function(d){return d.x})
+    chart.y(function(d){return d.y})
     chart.showControls(true)
-
+    chart.delay(0)
 
     d3.select('#chart1 svg')
-        .datum(negative_test_data)
-      .transition().duration(500).call(chart);
+      .datum(data)
+      .transition()
+      .duration(0)
+      .call(chart);
 
     nv.utils.windowResize(chart.update);
-
-    chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
 
     return chart;
 });

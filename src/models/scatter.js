@@ -369,13 +369,16 @@ nv.models.scatter = function() {
 
 
       if (onlyCircles) {
-
+        var getR = function(d,i) {
+              var r = d.size ||  Math.sqrt(z(getSize(d,i))/Math.PI)
+              return r;
+        }
         var points = groups.selectAll('circle.nv-point')
             .data(function(d) { return d.values });
         points.enter().append('circle')
             .attr('cx', function(d,i) { return x0(getX(d,i)) })
             .attr('cy', function(d,i) { return y0(getY(d,i)) })
-            .attr('r', function(d,i) { return Math.sqrt(z(getSize(d,i))/Math.PI) });
+            .attr('r', getR);
         points.exit().remove();
         d3.transition(groups.exit().selectAll('path.nv-point'))
             .attr('cx', function(d,i) { return x(getX(d,i)) })
@@ -385,7 +388,7 @@ nv.models.scatter = function() {
         d3.transition(points)
             .attr('cx', function(d,i) { return x(getX(d,i)) })
             .attr('cy', function(d,i) { return y(getY(d,i)) })
-            .attr('r', function(d,i) { return Math.sqrt(z(getSize(d,i))/Math.PI) });
+            .attr('r', getR );
 
       } else {
 

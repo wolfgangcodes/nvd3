@@ -581,7 +581,7 @@ nv.models.scatterChart = function() {
     defaultState = _;
     return chart;
   };
-  
+
   chart.noData = function(_) {
     if (!arguments.length) return noData;
     noData = _;

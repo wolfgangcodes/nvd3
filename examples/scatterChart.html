@@ -56,6 +56,8 @@ div {
 <script src="../src/models/distribution.js"></script>
 <script src="../src/models/scatter.js"></script>
 <script src="../src/models/scatterChart.js"></script>
+<script src="http://code.jquery.com/jquery-2.0.3.js"></script>
+
 <script>
 
 
@@ -69,17 +71,20 @@ nv.addGraph(function() {
                 //.height(500)
                 .useVoronoi(true)
                 .color(d3.scale.category10().range());
-
+                //.onlyCircles(true);;
+  var SIZE = 1.25;
+  chart.size(SIZE);
+  chart.sizeRange([SIZE, SIZE]);
   chart.xAxis.tickFormat(d3.format('.02f'))
   chart.yAxis.tickFormat(d3.format('.02f'))
 
+  var data = randomData(4,40)
   d3.select('#test1 svg')
-      .datum(randomData(4,40))
+      .datum(data)
     .transition().duration(500)
       .call(chart);
-
+  console.log(data)
   nv.utils.windowResize(chart.update);
-
   chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
 
   return chart;
@@ -88,7 +93,7 @@ nv.addGraph(function() {
 
 function randomData(groups, points) { //# groups,# points per group
   var data = [],
-      shapes = ['circle', 'cross', 'triangle-up', 'triangle-down', 'diamond', 'square'],
+      shapes = ['circle']// 'cross', 'triangle-up', 'triangle-down', 'diamond', 'square'],
       random = d3.random.normal();
 
   for (i = 0; i < groups; i++) {
@@ -99,10 +104,10 @@ function randomData(groups, points) { //# groups,# points per group
 
     for (j = 0; j < points; j++) {
       data[i].values.push({
-        x: random(), 
-        y: random(), 
-        size: Math.random(), 
-        shape: shapes[j % 6]
+        x: random(),
+        y: random(),
+        // size: 1000.25,//Math.random(),
+        shape: shapes[j % shapes.length]
       });
     }
   }

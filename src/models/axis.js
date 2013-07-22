@@ -34,7 +34,6 @@ nv.models.axis = function() {
   // Private Variables
   //------------------------------------------------------------
 
-  var scale0;
 
   //============================================================
 
@@ -58,18 +57,13 @@ nv.models.axis = function() {
       else if (axis.orient() == 'top' || axis.orient() == 'bottom')
         axis.ticks(Math.abs(scale.range()[1] - scale.range()[0]) / 100);
 
-
       //TODO: consider calculating width/height based on whether or not label is added, for reference in charts using this component
+      g.call(axis);
 
-
-      d3.transition(g)
-          .call(axis);
-
-      scale0 = scale0 || axis.scale();
 
       var fmt = axis.tickFormat();
       if (fmt == null) {
-        fmt = scale0.tickFormat();
+        fmt = scale.tickFormat();
       }
 
       var axisLabel = g.selectAll('text.nv-axislabel')
@@ -99,8 +93,7 @@ nv.models.axis = function() {
                 .text(function(d,i) {
                   var v = fmt(d);
                   return ('' + v).match('NaN') ? '' : v;
-                });
-            d3.transition(axisMaxMin)
+                })
                 .attr('transform', function(d,i) {
                   return 'translate(' + scale.range()[i] + ',0)'
                 });
@@ -157,8 +150,7 @@ nv.models.axis = function() {
                 .text(function(d,i) {
                   var v = fmt(d);
                   return ('' + v).match('NaN') ? '' : v;
-                });
-            d3.transition(axisMaxMin)
+                })
                 .attr('transform', function(d,i) {
                   //return 'translate(' + scale.range()[i] + ',0)'
                   //return 'translate(' + scale(d) + ',0)'
@@ -195,8 +187,7 @@ nv.models.axis = function() {
                 .text(function(d,i) {
                   var v = fmt(d);
                   return ('' + v).match('NaN') ? '' : v;
-                });
-            d3.transition(axisMaxMin)
+                })
                 .attr('transform', function(d,i) {
                   return 'translate(0,' + scale.range()[i] + ')'
                 })
@@ -227,7 +218,7 @@ nv.models.axis = function() {
             axisMaxMin.exit().remove();
             axisMaxMin
                 .attr('transform', function(d,i) {
-                  return 'translate(0,' + scale0(d) + ')'
+                  return 'translate(0,' + scale(d) + ')'
                 })
               .select('text')
                 .attr('dy', '.32em')
@@ -237,8 +228,7 @@ nv.models.axis = function() {
                 .text(function(d,i) {
                   var v = fmt(d);
                   return ('' + v).match('NaN') ? '' : v;
-                });
-            d3.transition(axisMaxMin)
+                })
                 .attr('transform', function(d,i) {
                   return 'translate(0,' + scale.range()[i] + ')'
                 })
@@ -304,10 +294,6 @@ nv.models.axis = function() {
         g.selectAll('line.tick')
           .filter(function(d) { return !parseFloat(Math.round(d*100000)/1000000) }) //this is because sometimes the 0 tick is a very small fraction, TODO: think of cleaner technique
             .classed('zero', true);
-
-      //store old scales for use in transitions on update
-      scale0 = scale.copy();
-
     });
 
     return chart;
@@ -395,7 +381,6 @@ nv.models.axis = function() {
     staggerLabels = _;
     return chart;
   };
-
 
   //============================================================
 
