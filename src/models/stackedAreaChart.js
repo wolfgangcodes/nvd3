@@ -255,24 +255,6 @@ nv.models.stackedAreaChart = function() {
       // Event Handling/Dispatching (in chart's scope)
       //------------------------------------------------------------
 
-      stacked.dispatch.on('areaClick.toggle', function(e) {
-        if (data.filter(function(d) { return !d.disabled }).length === 1)
-          data = data.map(function(d) {
-            d.disabled = false;
-            return d
-          });
-        else
-          data = data.map(function(d,i) {
-            d.disabled = (i != e.seriesIndex);
-            return d
-          });
-
-        state.disabled = data.map(function(d) { return !!d.disabled });
-        dispatch.stateChange(state);
-
-        chart.update()
-      });
-
       legend.dispatch.on('legendClick', function(d,i) {
         d.disabled = !d.disabled;
 
