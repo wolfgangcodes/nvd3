@@ -9,11 +9,10 @@ nv.models.axis = function(granularity) {
     ;
 
   var scale = scale || d3.time.scale()
-    , rotateLabels = 0
     , isOrdinal = false
     , ticks = granularity || null
     , yLabelMargin = 35 // This is the amount the left margin to allocate to the use of labels.
-    , first = true
+    , drawBoxes = true
     ;
 
   axis
@@ -31,43 +30,6 @@ nv.models.axis = function(granularity) {
 
 
   //============================================================
-  function shouldRotate(){
-    switch (granularity){
-      case 'ordinal':
-        return  shouldRotateOrdinal();
-      case 'hour':
-      case 'day':
-      case 'week':
-      case 'month':
-        return shouldRotateTime();
-      default:
-        console.log('Unknown granularity for axis', granularity);
-        return false;
-    }
-  }
-
-  function shouldRotateOrdinal(){
-    //var wordWidth = _.max _.map angular.element(".nv-x text"), (item, i) ->
-          //   nv.utils.calcApproxTextWidth d3.select item
-
-          // barWidth = Number angular.element(".nv-bar").attr("width")
-          // shouldRotate = wordWidth >= barWidth
-          // m = chart.margin()
-          // if chart.rotateLabels
-          //   if shouldRotate
-          //     chart.xAxis.tickPadding(-5)
-          //     chart.rotateLabels(-90)
-          //     #This 20, may seem magical, but I assure you it is mundane.
-          //     # nv.utils.calcApproxTextWidth does not account for BOLDNESS, so we nudge it here.
-          //     # TODO: patch nv.utils.calcApproxTextWidth to account for boldness, and remove the nudge
-          //     m.bottom = wordWidth + 20
-          //   else
-          //     chart.xAxis.tickPadding(7)
-          //     chart.rotateLabels(0)
-          //     m.bottom = bottomMargin
-          // chart.margin m
-  }
-  function shouldRotateTime(){}
 
   //TODO: Apply, clip labels, so they don't overwrite chart.
   function chart(selection) {
@@ -107,7 +69,6 @@ nv.models.axis = function(granularity) {
             console.log('Unknown granularity for axis', granularity);
             return false;
         }
-
       }
 
       g.call(axis)
@@ -116,6 +77,44 @@ nv.models.axis = function(granularity) {
         .classed('tick-label', true)
       var lines = g.selectAll('g .tick')
 
+      function shouldRotate(){
+        switch (granularity){
+          case 'ordinal':
+            return  shouldRotateOrdinal();
+          case 'hour':
+          case 'day':
+          case 'week':
+          case 'month':
+            return shouldRotateTime();
+          default:
+            console.log('Unknown granularity for axis', granularity);
+            return false;
+        }
+      }
+
+      function shouldRotateOrdinal(){
+        var wordWidth = d3.max(tickLabels.map(function(item, i){
+          return nv.utils.calcApproxTextWidth(d3.select(this));
+          }).data());
+        var barWidth = scale.rangeBand()
+        var shouldRotate = wordWidth >= barWidth
+        // m = chart.margin()
+        if(shouldRotate) {
+          axis.tickPadding(-5)
+          //This 20, may seem magical, but I assure you it is mundane.
+          // nv.utils.calcApproxTextWidth does not account for BOLDNESS, so we nudge it here.
+          // TODO: patch nv.utils.calcApproxTextWidth to account for boldness, and remove the nudge
+          // m.bottom = wordWidth + 20
+        }
+        else{
+          axis.tickPadding(7)
+        }
+        // m.bottom = bottomMargin
+        // chart.margin m
+        return shouldRotate ? -90 : 0;
+      }
+
+      function shouldRotateTime(){}
       //TODO: Make an X Axis, YAxis it will make it cleaner and leaner.
       //ADDR: Axis.orient has nothing to do with where the axis is located.  It just about where to place the labels wrt to the line.
       switch (axis.orient()) {
@@ -132,7 +131,7 @@ nv.models.axis = function(granularity) {
           });
 
           //TODO: Should Rotate?
-          shouldRotate();
+          var rotateLabels = shouldRotate() || 0;
 
           var anchor = 'middle';
           if(rotateLabels === 0){
@@ -160,9 +159,9 @@ nv.models.axis = function(granularity) {
             .attr('x1', -10000)
             .attr('x2', 10000)
 
-          //Put boxes around things, but only once.
-          //TODO: figure out how to do this without first variable, this will be better
-          if(first){
+          //Put boxes around things, but only if we need to.  The first time after a scale update.
+          //TODO: figure out how to do this without drawBoxes variable, this will be better
+          if(drawBoxes){
             g.selectAll('g').each(function(d, thing){
               var buffer = 1;
               var group = d3.select(this);
@@ -176,7 +175,7 @@ nv.models.axis = function(granularity) {
               .attr("height", SVGRect.height)
             });
           }
-          first = false;
+          drawBoxes = false;
           break;
       }
 
@@ -217,15 +216,9 @@ nv.models.axis = function(granularity) {
     axis.scale(scale);
     isOrdinal = typeof scale.rangeBands === 'function';
     d3.rebind(chart, scale, 'domain', 'range', 'rangeBand', 'rangeBands');
+    drawBoxes = true;
     return chart;
   }
-
-  chart.rotateLabels = function(_) {
-    if(!arguments.length) return rotateLabels;
-    rotateLabels = _;
-    return chart;
-  }
-
 
   chart.yLabelMargin = function(_) {
     if(!arguments.length) return yLabelMargin;

@@ -18,7 +18,6 @@ nv.models.multiBarChart = function() {
     , showLegend = true
     , reduceXTicks = true // if false a tick will show for every data point
     , staggerLabels = false
-    , rotateLabels = 0
     , tooltips = true
     , keyFormatter = function (key) { return key; }
     , keyValueFormatter = function (key) { return key; }
@@ -177,8 +176,7 @@ nv.models.multiBarChart = function() {
       // Setup Axes
 
       xAxis
-        .scale(x)
-        .rotateLabels(rotateLabels);
+        .scale(x);
 
       g.select('.nv-x.nv-axis')
           .attr('transform', 'translate(0,' + availableHeight + ')')

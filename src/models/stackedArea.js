@@ -123,12 +123,7 @@ nv.models.stackedArea = function() {
       var scatterWrap = g.select('.nv-scatterWrap')
           .datum(data.filter(function(d) { return !d.disabled }))
 
-      //d3.transition(scatterWrap).call(scatter);
       scatterWrap.call(scatter);
-
-
-
-
 
       defsEnter.append('clipPath')
           .attr('id', 'nv-edge-clip-' + id)
@@ -139,9 +134,6 @@ nv.models.stackedArea = function() {
           .attr('height', availableHeight);
 
       g   .attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + id + ')' : '');
-
-
-
 
       var area = d3.svg.area()
           .x(function(d,i)  { return x(getX(d,i)) })
