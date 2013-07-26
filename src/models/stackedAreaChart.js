@@ -45,7 +45,6 @@ nv.models.stackedAreaChart = function() {
     ;
   stacked.scatter
     .pointActive(function(d) {
-      //console.log(stacked.y()(d), !!Math.round(stacked.y()(d) * 100));
       return !!Math.round(stacked.y()(d) * 100);
     })
     ;
@@ -212,7 +211,6 @@ nv.models.stackedAreaChart = function() {
 
       //------------------------------------------------------------
 
-
       wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 
@@ -235,16 +233,14 @@ nv.models.stackedAreaChart = function() {
 
       xAxis
         .scale(x)
-        // .ticks( availableWidth / 100 )
         .tickSize( -availableHeight, 0);
-
       g.select('.nv-x.nv-axis')
           .attr('transform', 'translate(0,' + availableHeight + ')')
           .call(xAxis);
 
       yAxis
         .scale(y)
-        // .ticks(stacked.offset() == 'wiggle' ? 0 : (numTicks ? numTicks : availableHeight / 36))
+        .ticks(stacked.offset() == 'wiggle' ? 0 : (numTicks ? numTicks : availableHeight / 36))
         .setTickFormat(stacked.offset() == 'expand' ? d3.format('%') : yAxisTickFormat);
 
       g.select('.nv-y.nv-axis')
@@ -336,15 +332,6 @@ nv.models.stackedAreaChart = function() {
   //------------------------------------------------------------
 
   stacked.dispatch.on('tooltipShow', function(e) {
-    //disable tooltips when value ~= 0
-    //// TODO: consider removing points from voronoi that have 0 value instead of this hack
-    /*
-    if (!Math.round(stacked.y()(e.point) * 100)) {  // 100 will not be good for very small numbers... will have to think about making this valu dynamic, based on data range
-      setTimeout(function() { d3.selectAll('.point.hover').classed('hover', false) }, 0);
-      return false;
-    }
-   */
-
     e.pos = [e.pos[0] + margin.left, e.pos[1] + margin.top],
     dispatch.tooltipShow(e);
   });

@@ -204,7 +204,6 @@ nv.models.multiBarChart = function() {
 
       //------------------------------------------------------------
 
-
       wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 
@@ -232,37 +231,17 @@ nv.models.multiBarChart = function() {
 
       xAxis
         .scale(x)
-        .ticks( availableWidth / 100 )
         .tickSize(-availableHeight, 0)
-        .rotateLabels(rotateLabels)
-      ;
+        .rotateLabels(rotateLabels);
 
       g.select('.nv-x.nv-axis')
           .attr('transform', 'translate(0,' + availableHeight + ')')
           .call(xAxis);
 
-      var xTicks = g.select('.nv-x.nv-axis > g').selectAll('g');
-
-      // xTicks
-      //     .selectAll('line, text')
-      //     .style('opacity', 1)
-
-
-      if (reduceXTicks)
-        xTicks
-          .filter(function(d,i) {
-              return i % Math.ceil(data[0].values.length / (availableWidth / 100)) !== 0;
-            })
-          .selectAll('text, line')
-          .style('opacity', 0);
-
-      g.select('.nv-x.nv-axis')
-        .selectAll('g.nv-axisMaxMin text')
-        .style('opacity', 1);
-
       yAxis
+        .scale(y)
+        // .ticks()
         .setTickFormat(multibar.expanded() ? d3.format('%') : yAxisTickFormat)
-        .scale(y);
 
       g.select('.nv-y.nv-axis')
           .call(yAxis)
@@ -390,10 +369,14 @@ nv.models.multiBarChart = function() {
   d3.rebind(chart, multibar, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'id', 'stacked', 'expanded', 'style', 'delay', 'barColor');
 
   chart.margin = function(_) {
-    if (!arguments.length) return multibar.margin();
-    multibar.margin(_);
+    if (!arguments.length) return margin;
+    margin.top    = typeof _.top    != 'undefined' ? _.top    : margin.top;
+    margin.right  = typeof _.right  != 'undefined' ? _.right  : margin.right;
+    margin.bottom = typeof _.bottom != 'undefined' ? _.bottom : margin.bottom;
+    margin.left   = typeof _.left   != 'undefined' ? _.left   : margin.left;
     return chart;
   };
+
 
   chart.width = function(_) {
     if (!arguments.length) return width;
