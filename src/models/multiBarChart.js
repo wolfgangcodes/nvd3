@@ -71,7 +71,12 @@ nv.models.multiBarChart = function() {
     opts.chart = chart;
     opts.data = e.series;
     opts.event = e;
-    nv.tooltip.show([opts.left, opts.top], tooltip(opts), e.value < 0 ? 'n' : 's', null, offsetElement);
+    var gravity = e.value < 0 ? 'n' : 's';
+    if (e.pointIndex === 0)
+      gravity = 'w';
+    else if (e.pointIndex === e.series.values.length -1)
+      gravity = 'e';
+    nv.tooltip.show([opts.left, opts.top], tooltip(opts), gravity, null, offsetElement);
   };
   //============================================================
 
@@ -230,7 +235,7 @@ nv.models.multiBarChart = function() {
         .ticks( availableWidth / 100 )
         .tickSize(-availableHeight, 0)
         .rotateLabels(rotateLabels)
-        .margin(margin);
+      ;
 
       g.select('.nv-x.nv-axis')
           .attr('transform', 'translate(0,' + y.range()[0] + ')')
@@ -238,9 +243,9 @@ nv.models.multiBarChart = function() {
 
       var xTicks = g.select('.nv-x.nv-axis > g').selectAll('g');
 
-      xTicks
-          .selectAll('line, text')
-          .style('opacity', 1)
+      // xTicks
+      //     .selectAll('line, text')
+      //     .style('opacity', 1)
 
 
       if (reduceXTicks)
@@ -387,8 +392,6 @@ nv.models.multiBarChart = function() {
   chart.margin = function(_) {
     if (!arguments.length) return multibar.margin();
     multibar.margin(_);
-    xAxis.margin(_);
-    yAxis.margin(_);
     return chart;
   };
 

@@ -67,8 +67,13 @@ nv.models.stackedAreaChart = function() {
     opts.chart = chart;
     opts.data = e.series;
     opts.event = e;
+    var gravity  = e.value < 0 ? 'n' : 's'
+    if (e.pointIndex === 0)
+      gravity = 'w';
+    else if (e.pointIndex === e.series.values.length -1)
+      gravity = 'e';
 
-    nv.tooltip.show([opts.left, opts.top], tooltip(opts), e.value < 0 ? 'n' : 's', null, offsetElement);
+    nv.tooltip.show([opts.left, opts.top], tooltip(opts), gravity, null, offsetElement);
   };
 
   //============================================================

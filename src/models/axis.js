@@ -1,4 +1,4 @@
-nv.models.axis = function(margin, granularity) {
+nv.models.axis = function(type, granularity) {
 
   //============================================================
   // Public Variables with Default Settings
@@ -7,8 +7,7 @@ nv.models.axis = function(margin, granularity) {
   var axis = d3.svg.axis()
     ;
 
-  var margin = {top: 0, right: 0, bottom: 0, left: 0}//chart.margin() // Top/bottom, it's chart.margin, else it can have it own margin?
-    , scale = scale || d3.scale.linear()
+  var scale = scale || d3.scale.linear()
     , rotateLabels = 0
     , isOrdinal = false
     , isTIme = false
@@ -32,7 +31,6 @@ nv.models.axis = function(margin, granularity) {
 
   //============================================================
 
-  //TODO: Make an X Axis, YAxis it will make it cleaner and leaner.
   //TODO: Clip labels, so they don't overwrite chart.
   function chart(selection) {
 
@@ -53,7 +51,8 @@ nv.models.axis = function(margin, granularity) {
       if (ticks !== null)
         axis.ticks(ticks);
       else if (axis.orient() == 'top' || axis.orient() == 'bottom')
-        axis.ticks(Math.abs(scale.range()[1] - scale.range()[0]) / 100 + 10);
+        axis.ticks(2);
+        // axis.ticks(Math.abs(scale.range()[1] - scale.range()[0]) / 100 + 10);
 
       // Make the axis.
       g.call(axis)
@@ -62,10 +61,10 @@ nv.models.axis = function(margin, granularity) {
         .classed('tick-label', true)
       var lines = g.selectAll('g .tick')
 
+      //TODO: Make an X Axis, YAxis it will make it cleaner and leaner.
       //ADDR: Axis.orient has nothing to do with where the axis is located.  It just about where to place the labels wrt to the line.
       switch (axis.orient()) {
-        // case 'top':
-        //   break;
+
         case 'bottom':
           var xLabelMargin = 36;
           var maxTextWidth = 30;
@@ -99,19 +98,20 @@ nv.models.axis = function(margin, granularity) {
           //     .attr('text-anchor', 'start')
           //   };
           break;
-        // case 'right':
-        //   lines
-        //     .attr('x1', -10000)
-        //     .attr('x2', 10000)
-        //   tickLabels.attr('text-anchor', 'end');
-        case 'left':
-          tickLabels.attr('x', function(d){
-            return -yLabelMargin;
-          })
+        case 'right':
+           tickLabels
+            .attr('x', function(d){return yLabelMargin;})
+            .attr('text-anchor', 'start');
           lines
             .attr('x1', -10000)
             .attr('x2', 10000)
-          tickLabels.attr('text-anchor', 'start');
+        case 'left':
+          tickLabels
+            .attr('x', function(d){return -yLabelMargin;})
+            .attr('text-anchor', 'start');
+          lines
+            .attr('x1', -10000)
+            .attr('x2', 10000)
           break;
       }
 
