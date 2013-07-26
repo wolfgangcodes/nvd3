@@ -230,7 +230,7 @@ nv.models.stackedAreaChart = function() {
 
       xAxis
         .scale(x)
-        .ticks( availableWidth / 100 )
+        // .ticks( availableWidth / 100 )
         .tickSize( -availableHeight, 0);
 
       g.select('.nv-x.nv-axis')
@@ -239,15 +239,11 @@ nv.models.stackedAreaChart = function() {
 
       yAxis
         .scale(y)
-        .ticks(stacked.offset() == 'wiggle' ? 0 : (numTicks ? numTicks : availableHeight / 36))
-        .tickSize(-100000, -100000, -100000)
+        // .ticks(stacked.offset() == 'wiggle' ? 0 : (numTicks ? numTicks : availableHeight / 36))
         .setTickFormat(stacked.offset() == 'expand' ? d3.format('%') : yAxisTickFormat);
 
       g.select('.nv-y.nv-axis')
           .call(yAxis)
-          .selectAll('.tick')
-          .attr('x1', -10000)
-          .attr('x2', 10000);
       //------------------------------------------------------------
 
 

@@ -46,8 +46,6 @@ nv.models.multiBarChart = function() {
   xAxis
     .orient('bottom')
     .tickPadding(7)
-    .highlightZero(false)
-    .showMaxMin(false)
     .tickFormat(function(d) { return d })
     ;
   yAxis
@@ -244,26 +242,6 @@ nv.models.multiBarChart = function() {
           .selectAll('line, text')
           .style('opacity', 1)
 
-      if (staggerLabels) {
-          var getTranslate = function(x,y) {
-              return "translate(" + x + "," + y + ")";
-          };
-
-          var staggerUp = 5, staggerDown = 17;  //pixels to stagger by
-          // Issue #140
-          xTicks
-            .selectAll("text")
-            .attr('transform', function(d,i,j) {
-                return  getTranslate(0, (j % 2 == 0 ? staggerUp : staggerDown));
-              });
-
-          var totalInBetweenTicks = d3.selectAll(".nv-x.nv-axis .nv-wrap g g text")[0].length;
-          g.selectAll(".nv-x.nv-axis .nv-axisMaxMin text")
-            .attr("transform", function(d,i) {
-                return getTranslate(0, (i === 0 || totalInBetweenTicks % 2 !== 0) ? staggerDown : staggerUp);
-            });
-      }
-
 
       if (reduceXTicks)
         xTicks
@@ -278,17 +256,12 @@ nv.models.multiBarChart = function() {
         .style('opacity', 1);
 
       yAxis
-        .ticks( numTicks || availableHeight / 36 )
-        .tickSize(-100000, -100000, -100000)
         .setTickFormat(multibar.expanded() ? d3.format('%') : yAxisTickFormat)
-        .margin(margin)
         .scale(y);
 
       g.select('.nv-y.nv-axis')
           .call(yAxis)
-          .selectAll('.tick')
-          .attr('x1', -10000)
-          .attr('x2', 10000)
+
 
       //------------------------------------------------------------
 

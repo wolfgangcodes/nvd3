@@ -1,4 +1,4 @@
-nv.models.axis = function() {
+nv.models.axis = function(margin, granularity) {
 
   //============================================================
   // Public Variables with Default Settings
@@ -7,18 +7,13 @@ nv.models.axis = function() {
   var axis = d3.svg.axis()
     ;
 
-  var margin = {top: 0, right: 0, bottom: 0, left: 0}
-    , width = 75 //only used for tickLabel currently
-    , height = 60 //only used for tickLabel currently
-    , scale = d3.scale.linear()
-    , axisLabelText = null
-    , showMaxMin = true //TODO: showMaxMin should be disabled on all ordinal scaled axes
-    , highlightZero = true
+  var margin = {top: 0, right: 0, bottom: 0, left: 0}//chart.margin() // Top/bottom, it's chart.margin, else it can have it own margin?
+    , scale = scale || d3.scale.linear()
     , rotateLabels = 0
-    , rotateYLabel = true
-    , staggerLabels = false
     , isOrdinal = false
-    , ticks = null
+    , isTIme = false
+    , ticks = granularity || null
+    , yLabelMargin = 35 // This is the amount the left margin to allocate to the use of labels.
     ;
 
   axis
@@ -37,8 +32,10 @@ nv.models.axis = function() {
 
   //============================================================
 
-
+  //TODO: Make an X Axis, YAxis it will make it cleaner and leaner.
+  //TODO: Clip labels, so they don't overwrite chart.
   function chart(selection) {
+
     selection.each(function(data) {
       var container = d3.select(this);
 
@@ -52,63 +49,33 @@ nv.models.axis = function() {
       var g = wrap.select('g')
 
       //------------------------------------------------------------
+      //TODO:  THis sucks, use something better. isOrdinal, isTime
       if (ticks !== null)
         axis.ticks(ticks);
       else if (axis.orient() == 'top' || axis.orient() == 'bottom')
-        axis.ticks(Math.abs(scale.range()[1] - scale.range()[0]) / 100);
+        axis.ticks(Math.abs(scale.range()[1] - scale.range()[0]) / 100 + 10);
 
-      //TODO: consider calculating width/height based on whether or not label is added, for reference in charts using this component
-      g.call(axis);
+      // Make the axis.
+      g.call(axis)
 
+      var tickLabels = g.selectAll('g text')
+        .classed('tick-label', true)
+      var lines = g.selectAll('g .tick')
 
-      var fmt = axis.tickFormat();
-      if (fmt == null) {
-        fmt = scale.tickFormat();
-      }
-
-      var axisLabel = g.selectAll('text.nv-axislabel')
-          .data([axisLabelText || null]);
-      axisLabel.exit().remove();
+      //ADDR: Axis.orient has nothing to do with where the axis is located.  It just about where to place the labels wrt to the line.
       switch (axis.orient()) {
-        case 'top':
-          axisLabel.enter().append('text').attr('class', 'nv-axislabel');
-          var w = (scale.range().length==2) ? scale.range()[1] : (scale.range()[scale.range().length-1]+(scale.range()[1]-scale.range()[0]));
-          axisLabel
-              .attr('text-anchor', 'middle')
-              .attr('y', 0)
-              .attr('x', w/2);
-          if (showMaxMin) {
-            var axisMaxMin = wrap.selectAll('g.nv-axisMaxMin')
-                           .data(scale.domain());
-            axisMaxMin.enter().append('g').attr('class', 'nv-axisMaxMin').append('text');
-            axisMaxMin.exit().remove();
-            axisMaxMin
-                .attr('transform', function(d,i) {
-                  return 'translate(' + scale(d) + ',0)'
-                })
-              .select('text')
-                .attr('dy', '0em')
-                .attr('y', -axis.tickPadding())
-                .attr('text-anchor', 'middle')
-                .text(function(d,i) {
-                  var v = fmt(d);
-                  return ('' + v).match('NaN') ? '' : v;
-                })
-                .attr('transform', function(d,i) {
-                  return 'translate(' + scale.range()[i] + ',0)'
-                });
-          }
-          break;
+        // case 'top':
+        //   break;
         case 'bottom':
           var xLabelMargin = 36;
           var maxTextWidth = 30;
-          var xTicks = g.selectAll('g').select("text");
 
           //Calculate the longest xTick width
-          xTicks.each(function(d,i){
+          tickLabels.each(function(d,i){
             var width = this.getBBox().width;
             if(width > maxTextWidth) maxTextWidth = width;
           });
+
           var anchor = 'middle';
           if(rotateLabels === 0){
             anchor = 'middle'
@@ -122,175 +89,49 @@ nv.models.axis = function() {
           var sin = Math.abs(Math.sin(rotateLabels*Math.PI/180));
           var xLabelMargin = (sin ? sin*maxTextWidth : maxTextWidth)+30;
 
-          xTicks
+          tickLabels
             .attr('transform', function(d,i,j) { return 'rotate(' + (rotateLabels) + ',0,0), translate('+(xTranslate)+',0)' })
             .attr('text-anchor', anchor);
 
-          axisLabel.enter().append('text').attr('class', 'nv-axislabel');
-          var w = (scale.range().length==2) ? scale.range()[1] : (scale.range()[scale.range().length-1]+(scale.range()[1]-scale.range()[0]));
-          axisLabel
-              .attr('y', xLabelMargin)
-              .attr('x', w/2);
-          if (showMaxMin) {
-
-            var axisMaxMin = wrap.selectAll('g.nv-axisMaxMin')
-                           //.data(scale.domain())
-                           .data([scale.domain()[0], scale.domain()[scale.domain().length - 1]]);
-            axisMaxMin.enter().append('g').attr('class', 'nv-axisMaxMin').append('text');
-            axisMaxMin.exit().remove();
-            axisMaxMin
-                .attr('transform', function(d,i) {
-                  return 'translate(' + (scale(d) + (isOrdinal ? scale.rangeBand() / 2 : 0)) + ',0)'
-                })
-              .select('text')
-                .attr('dy', '.71em')
-                .attr('y', axis.tickPadding())
-                .attr('transform', function(d,i,j) { return 'rotate(' + rotateLabels + ' 0,0)' })
-                .attr('text-anchor', anchor)
-                .text(function(d,i) {
-                  var v = fmt(d);
-                  return ('' + v).match('NaN') ? '' : v;
-                })
-                .attr('transform', function(d,i) {
-                  //return 'translate(' + scale.range()[i] + ',0)'
-                  //return 'translate(' + scale(d) + ',0)'
-                  return 'translate(' + (scale(d) + (isOrdinal ? scale.rangeBand() / 2 : 0)) + ',0)'
-                });
-          }
-          if (staggerLabels)
-            xTicks
-                .attr('transform', function(d,i) { return 'translate(0,' + (i % 2 == 0 ? '0' : '12') + ')' });
-
+          //Start and end get labels get start, end, rest get middle if no rotate
+          // if (rotateLabels === 0){
+          //   first = d3.select(tickLabels[0][0])
+          //     .attr('text-anchor', 'start')
+          //   };
           break;
-        case 'right':
-          axisLabel.enter().append('text').attr('class', 'nv-axislabel');
-          axisLabel
-              .attr('text-anchor', rotateYLabel ? 'middle' : 'begin')
-              .attr('transform', rotateYLabel ? 'rotate(90)' : '')
-              .attr('y', rotateYLabel ? (-Math.max(margin.right,width) + 12) : -10) //TODO: consider calculating this based on largest tick width... OR at least expose this on chart
-              .attr('x', rotateYLabel ? (scale.range()[0] / 2) : axis.tickPadding());
-          if (showMaxMin) {
-            var axisMaxMin = wrap.selectAll('g.nv-axisMaxMin')
-                           .data(scale.domain());
-            axisMaxMin.enter().append('g').attr('class', 'nv-axisMaxMin').append('text')
-                .style('opacity', 0);
-            axisMaxMin.exit().remove();
-            axisMaxMin
-                .attr('transform', function(d,i) {
-                  return 'translate(0,' + scale(d) + ')'
-                })
-              .select('text')
-                .attr('dy', '.32em')
-                .attr('y', 0)
-                .attr('x', axis.tickPadding())
-                .attr('text-anchor', 'start')
-                .text(function(d,i) {
-                  var v = fmt(d);
-                  return ('' + v).match('NaN') ? '' : v;
-                })
-                .attr('transform', function(d,i) {
-                  return 'translate(0,' + scale.range()[i] + ')'
-                })
-              .select('text')
-                .style('opacity', 1);
-          }
-          break;
+        // case 'right':
+        //   lines
+        //     .attr('x1', -10000)
+        //     .attr('x2', 10000)
+        //   tickLabels.attr('text-anchor', 'end');
         case 'left':
-          /*
-          //For dynamically placing the label. Can be used with dynamically-sized chart axis margins
-          var yTicks = g.selectAll('g').select("text");
-          yTicks.each(function(d,i){
-            var labelPadding = this.getBBox().width + axis.tickPadding() + 16;
-            if(labelPadding > width) width = labelPadding;
-          });
-          */
-          axisLabel.enter().append('text').attr('class', 'nv-axislabel');
-          axisLabel
-              .attr('text-anchor', rotateYLabel ? 'middle' : 'end')
-              .attr('transform', rotateYLabel ? 'rotate(-90)' : '')
-              .attr('y', rotateYLabel ? (-Math.max(margin.left,width) + 12) : -10) //TODO: consider calculating this based on largest tick width... OR at least expose this on chart
-              .attr('x', rotateYLabel ? (-scale.range()[0] / 2) : -axis.tickPadding());
-          if (showMaxMin) {
-            var axisMaxMin = wrap.selectAll('g.nv-axisMaxMin')
-                           .data(scale.domain());
-            axisMaxMin.enter().append('g').attr('class', 'nv-axisMaxMin').append('text')
-                .style('opacity', 0);
-            axisMaxMin.exit().remove();
-            axisMaxMin
-                .attr('transform', function(d,i) {
-                  return 'translate(0,' + scale(d) + ')'
-                })
-              .select('text')
-                .attr('dy', '.32em')
-                .attr('y', 0)
-                .attr('x', -axis.tickPadding())
-                .attr('text-anchor', 'end')
-                .text(function(d,i) {
-                  var v = fmt(d);
-                  return ('' + v).match('NaN') ? '' : v;
-                })
-                .attr('transform', function(d,i) {
-                  return 'translate(0,' + scale.range()[i] + ')'
-                })
-              .select('text')
-                .style('opacity', 1);
-          }
+          tickLabels.attr('x', function(d){
+            return -yLabelMargin;
+          })
+          lines
+            .attr('x1', -10000)
+            .attr('x2', 10000)
+          tickLabels.attr('text-anchor', 'start');
           break;
       }
-      axisLabel
-          .text(function(d) { return d });
 
+      //Make sure we're showing a top and bottom axis.
 
-      if (showMaxMin && (axis.orient() === 'left' || axis.orient() === 'right')) {
-        //check if max and min overlap other values, if so, hide the values that overlap
-        g.selectAll('g') // the g's wrapping each tick
-            .each(function(d,i) {
-              d3.select(this).select('text').attr('opacity', 1);
-              if (scale(d) < scale.range()[1] + 10 || scale(d) > scale.range()[0] - 10) { // 10 is assuming text height is 16... if d is 0, leave it!
-                if (d > 1e-10 || d < -1e-10) // accounts for minor floating point errors... though could be problematic if the scale is EXTREMELY SMALL
-                  d3.select(this).attr('opacity', 0);
-
-                d3.select(this).select('text').attr('opacity', 0); // Don't remove the ZERO line!!
-              }
-            });
-
-        //if Max and Min = 0 only show min, Issue #281
-        if (scale.domain()[0] == scale.domain()[1] && scale.domain()[0] == 0)
-          wrap.selectAll('g.nv-axisMaxMin')
-            .style('opacity', function(d,i) { return !i ? 1 : 0 });
-
-      }
-
-      if (showMaxMin && (axis.orient() === 'top' || axis.orient() === 'bottom')) {
-        var maxMinRange = [];
-        wrap.selectAll('g.nv-axisMaxMin')
-            .each(function(d,i) {
-              try {
-                  if (i) // i== 1, max position
-                      maxMinRange.push(scale(d) - this.getBBox().width - 4)  //assuming the max and min labels are as wide as the next tick (with an extra 4 pixels just in case)
-                  else // i==0, min position
-                      maxMinRange.push(scale(d) + this.getBBox().width + 4)
-              }catch (err) {
-                  if (i) // i== 1, max position
-                      maxMinRange.push(scale(d) - 4)  //assuming the max and min labels are as wide as the next tick (with an extra 4 pixels just in case)
-                  else // i==0, min position
-                      maxMinRange.push(scale(d) + 4)
-              }
-            });
-        g.selectAll('g') // the g's wrapping each tick
-            .each(function(d,i) {
-              if (scale(d) < maxMinRange[0] || scale(d) > maxMinRange[1]) {
-                if (d > 1e-10 || d < -1e-10) // accounts for minor floating point errors... though could be problematic if the scale is EXTREMELY SMALL
-                  d3.select(this).remove();
-                else
-                  d3.select(this).select('text').remove(); // Don't remove the ZERO line!!
-              }
-            });
-      }
-
-
+      //Put boxes around things.
+      g.selectAll('g').each(function(d, thing){
+        var buffer = 1;
+        var group = d3.select(this);
+        var text = group.select('.tick-label');
+        var SVGRect = text[0][0].getBBox();
+        var rect = group.insert("rect", '.tick-label');
+        rect.attr("class", "nvd3-text-background")
+        .attr("x", SVGRect.x - buffer )
+        .attr("y", SVGRect.y)
+        .attr("width", SVGRect.width + 2 * buffer)
+        .attr("height", SVGRect.height)
+      });
       //highlight zero line ... Maybe should not be an option and should just be in CSS?
-      if (highlightZero)
+      //TODO: Just select the [first one?]
         g.selectAll('line.tick')
           .filter(function(d) { return !parseFloat(Math.round(d*100000)/1000000) }) //this is because sometimes the 0 tick is a very small fraction, TODO: think of cleaner technique
             .classed('zero', true);
@@ -310,20 +151,6 @@ nv.models.axis = function() {
   d3.rebind(chart, axis, 'orient', 'tickValues', 'tickSubdivide', 'tickSize', 'tickPadding', 'tickFormat');
   d3.rebind(chart, scale, 'domain', 'range', 'rangeBand', 'rangeBands'); //these are also accessible by chart.scale(), but added common ones directly for ease of use
 
-  chart.margin = function(_) {
-    if(!arguments.length) return margin;
-    margin.top    = typeof _.top    != 'undefined' ? _.top    : margin.top;
-    margin.right  = typeof _.right  != 'undefined' ? _.right  : margin.right;
-    margin.bottom = typeof _.bottom != 'undefined' ? _.bottom : margin.bottom;
-    margin.left   = typeof _.left   != 'undefined' ? _.left   : margin.left;
-    return chart;
-  }
-
-  chart.width = function(_) {
-    if (!arguments.length) return width;
-    width = _;
-    return chart;
-  };
 
   chart.ticks = function(_) {
     if (!arguments.length) return ticks;
@@ -337,24 +164,6 @@ nv.models.axis = function() {
     return chart;
   };
 
-  chart.axisLabel = function(_) {
-    if (!arguments.length) return axisLabelText;
-    axisLabelText = _;
-    return chart;
-  }
-
-  chart.showMaxMin = function(_) {
-    if (!arguments.length) return showMaxMin;
-    showMaxMin = _;
-    return chart;
-  }
-
-  chart.highlightZero = function(_) {
-    if (!arguments.length) return highlightZero;
-    highlightZero = _;
-    return chart;
-  }
-
   chart.scale = function(_) {
     if (!arguments.length) return scale;
     scale = _;
@@ -364,23 +173,18 @@ nv.models.axis = function() {
     return chart;
   }
 
-  chart.rotateYLabel = function(_) {
-    if(!arguments.length) return rotateYLabel;
-    rotateYLabel = _;
-    return chart;
-  }
-
   chart.rotateLabels = function(_) {
     if(!arguments.length) return rotateLabels;
     rotateLabels = _;
     return chart;
   }
 
-  chart.staggerLabels = function(_) {
-    if (!arguments.length) return staggerLabels;
-    staggerLabels = _;
+
+  chart.yLabelMargin = function(_) {
+    if(!arguments.length) return yLabelMargin;
+    yLabelMargin = _;
     return chart;
-  };
+  }
 
   //============================================================
 
