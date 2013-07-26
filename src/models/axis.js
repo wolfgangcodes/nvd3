@@ -161,6 +161,7 @@ nv.models.axis = function(granularity) {
             .attr('x2', 10000)
 
           //Put boxes around things, but only once.
+          //TODO: figure out how to do this without first variable, this will be better
           if(first){
             g.selectAll('g').each(function(d, thing){
               var buffer = 1;

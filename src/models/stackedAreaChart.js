@@ -3,7 +3,6 @@
 // Our area charts are always going to be time scales
 //granularity = hour/day/week/month/year/ordinal
 nv.models.stackedAreaChart = function(granularity) {
-  console.log(granularity);
   //============================================================
   // Public Variables with Default Settings
   //------------------------------------------------------------
