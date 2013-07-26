@@ -1,4 +1,5 @@
-nv.models.axis = function(type, granularity) {
+// granularity = hour/day/week/month/ordinal
+nv.models.axis = function(granularity) {
 
   //============================================================
   // Public Variables with Default Settings
@@ -7,12 +8,12 @@ nv.models.axis = function(type, granularity) {
   var axis = d3.svg.axis()
     ;
 
-  var scale = scale || d3.scale.linear()
+  var scale = scale || d3.time.scale()
     , rotateLabels = 0
     , isOrdinal = false
-    , isTIme = false
     , ticks = granularity || null
     , yLabelMargin = 35 // This is the amount the left margin to allocate to the use of labels.
+    , first = true
     ;
 
   axis
@@ -30,13 +31,49 @@ nv.models.axis = function(type, granularity) {
 
 
   //============================================================
+  function shouldRotate(){
+    switch (granularity){
+      case 'ordinal':
+        return  shouldRotateOrdinal();
+      case 'hour':
+      case 'day':
+      case 'week':
+      case 'month':
+        return shouldRotateTime();
+      default:
+        console.log('Unknown granularity for axis', granularity);
+        return false;
+    }
+  }
 
-  //TODO: Clip labels, so they don't overwrite chart.
+  function shouldRotateOrdinal(){
+    //var wordWidth = _.max _.map angular.element(".nv-x text"), (item, i) ->
+          //   nv.utils.calcApproxTextWidth d3.select item
+
+          // barWidth = Number angular.element(".nv-bar").attr("width")
+          // shouldRotate = wordWidth >= barWidth
+          // m = chart.margin()
+          // if chart.rotateLabels
+          //   if shouldRotate
+          //     chart.xAxis.tickPadding(-5)
+          //     chart.rotateLabels(-90)
+          //     #This 20, may seem magical, but I assure you it is mundane.
+          //     # nv.utils.calcApproxTextWidth does not account for BOLDNESS, so we nudge it here.
+          //     # TODO: patch nv.utils.calcApproxTextWidth to account for boldness, and remove the nudge
+          //     m.bottom = wordWidth + 20
+          //   else
+          //     chart.xAxis.tickPadding(7)
+          //     chart.rotateLabels(0)
+          //     m.bottom = bottomMargin
+          // chart.margin m
+  }
+  function shouldRotateTime(){}
+
+  //TODO: Apply, clip labels, so they don't overwrite chart.
   function chart(selection) {
 
     selection.each(function(data) {
       var container = d3.select(this);
-
 
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
@@ -47,14 +84,32 @@ nv.models.axis = function(type, granularity) {
       var g = wrap.select('g')
 
       //------------------------------------------------------------
-      //TODO:  THis sucks, use something better. isOrdinal, isTime
-      if (ticks !== null)
-        axis.ticks(ticks);
-      else if (axis.orient() == 'top' || axis.orient() == 'bottom')
-        axis.ticks(2);
-        // axis.ticks(Math.abs(scale.range()[1] - scale.range()[0]) / 100 + 10);
+      //Setup the number of ticks
+      if(axis.orient() === 'bottom'){
+        switch (granularity){
+          case 'ordinal':
+            //Defaults are cool or ordinal axis.
+            break;
+          case 'hour':
+            //TODO, here is where we decide how many to show.
+            axis.ticks(d3.time.hours, 1)
+            break;
+          case 'day':
+            axis.ticks(d3.time.days, 1)
+            break;
+          case 'week':
+            axis.ticks(d3.time.mondays, 1)
+            break;
+          case 'month':
+            axis.ticks(d3.time.months, 1)
+            break;
+          default:
+            console.log('Unknown granularity for axis', granularity);
+            return false;
+        }
 
-      // Make the axis.
+      }
+
       g.call(axis)
 
       var tickLabels = g.selectAll('g text')
@@ -66,6 +121,7 @@ nv.models.axis = function(type, granularity) {
       switch (axis.orient()) {
 
         case 'bottom':
+
           var xLabelMargin = 36;
           var maxTextWidth = 30;
 
@@ -74,6 +130,9 @@ nv.models.axis = function(type, granularity) {
             var width = this.getBBox().width;
             if(width > maxTextWidth) maxTextWidth = width;
           });
+
+          //TODO: Should Rotate?
+          shouldRotate();
 
           var anchor = 'middle';
           if(rotateLabels === 0){
@@ -92,19 +151,7 @@ nv.models.axis = function(type, granularity) {
             .attr('transform', function(d,i,j) { return 'rotate(' + (rotateLabels) + ',0,0), translate('+(xTranslate)+',0)' })
             .attr('text-anchor', anchor);
 
-          //Start and end get labels get start, end, rest get middle if no rotate
-          // if (rotateLabels === 0){
-          //   first = d3.select(tickLabels[0][0])
-          //     .attr('text-anchor', 'start')
-          //   };
           break;
-        case 'right':
-           tickLabels
-            .attr('x', function(d){return yLabelMargin;})
-            .attr('text-anchor', 'start');
-          lines
-            .attr('x1', -10000)
-            .attr('x2', 10000)
         case 'left':
           tickLabels
             .attr('x', function(d){return -yLabelMargin;})
@@ -112,24 +159,29 @@ nv.models.axis = function(type, granularity) {
           lines
             .attr('x1', -10000)
             .attr('x2', 10000)
+
+          //Put boxes around things, but only once.
+          if(first){
+            g.selectAll('g').each(function(d, thing){
+              var buffer = 1;
+              var group = d3.select(this);
+              var text = group.select('.tick-label');
+              var SVGRect = text[0][0].getBBox();
+              var rect = group.insert("rect", '.tick-label');
+              rect.attr("class", "nvd3-text-background")
+              .attr("x", SVGRect.x - buffer )
+              .attr("y", SVGRect.y)
+              .attr("width", SVGRect.width + 2 * buffer)
+              .attr("height", SVGRect.height)
+            });
+          }
+          first = false;
           break;
       }
 
       //Make sure we're showing a top and bottom axis.
 
-      //Put boxes around things.
-      g.selectAll('g').each(function(d, thing){
-        var buffer = 1;
-        var group = d3.select(this);
-        var text = group.select('.tick-label');
-        var SVGRect = text[0][0].getBBox();
-        var rect = group.insert("rect", '.tick-label');
-        rect.attr("class", "nvd3-text-background")
-        .attr("x", SVGRect.x - buffer )
-        .attr("y", SVGRect.y)
-        .attr("width", SVGRect.width + 2 * buffer)
-        .attr("height", SVGRect.height)
-      });
+
       //highlight zero line ... Maybe should not be an option and should just be in CSS?
       //TODO: Just select the [first one?]
         g.selectAll('line.tick')
@@ -155,12 +207,6 @@ nv.models.axis = function(type, granularity) {
   chart.ticks = function(_) {
     if (!arguments.length) return ticks;
     ticks = _;
-    return chart;
-  };
-
-  chart.height = function(_) {
-    if (!arguments.length) return height;
-    height = _;
     return chart;
   };
 

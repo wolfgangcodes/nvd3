@@ -6,10 +6,8 @@ nv.models.multiBarChart = function() {
   //------------------------------------------------------------
 
   var multibar = nv.models.multiBar()
-    , xAxis = nv.models.axis()
-    , yAxis = nv.models.axis()
-    , legend = nv.models.legend()
-    , controls = nv.models.legend()
+    , xAxis = nv.models.axis('ordinal')
+    , yAxis = nv.models.axis('linear')
     ;
 
   var margin = {top: 30, right: 20, bottom: 50, left: 60}
@@ -35,7 +33,6 @@ nv.models.multiBarChart = function() {
     , noData = "No Data Available."
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'stateChange', 'changeState')
     , controlWidth = function() { return showControls ? 240 : 0 }
-    , numTicks = null
     , yAxisTickFormat = d3.format(',.2f')
     ;
 
@@ -151,56 +148,6 @@ nv.models.multiBarChart = function() {
       xAxisGroup = gEnter.append('g').attr('class', 'nv-x nv-axis');
       yAxisGroup = gEnter.append('g').attr('class', 'nv-y nv-axis');
       gEnter.append('g').attr('class', 'nv-barsWrap');
-      gEnter.append('g').attr('class', 'nv-legendWrap');
-      gEnter.append('g').attr('class', 'nv-controlsWrap');
-
-      //------------------------------------------------------------
-
-
-      //------------------------------------------------------------
-      // Legend
-
-      if (showLegend) {
-        legend.width(availableWidth - controlWidth());
-
-        if (multibar.barColor())
-          data.forEach(function(series,i) {
-            series.color = d3.rgb('#ccc').darker(i * 1.5).toString();
-          })
-
-        g.select('.nv-legendWrap')
-            .datum(data)
-            .call(legend);
-
-        if ( margin.top != legend.height()) {
-          margin.top = legend.height();
-          availableHeight = (height || parseInt(container.style('height')) || 400)
-                             - margin.top - margin.bottom;
-        }
-
-        g.select('.nv-legendWrap')
-            .attr('transform', 'translate(' + controlWidth() + ',' + (-margin.top) +')');
-      }
-
-      //------------------------------------------------------------
-
-
-      //------------------------------------------------------------
-      // Controls
-
-      if (showControls) {
-        var controlsData = [
-          { key: 'Grouped', disabled: multibar.stacked() },
-          { key: 'Expanded', disabled: !(multibar.stacked() && multibar.expanded() )},
-          { key: 'Stacked',  disabled: !(multibar.stacked() && !multibar.expanded() )}
-        ];
-
-        controls.width(controlWidth()).color(['#444', '#444', '#444']);
-        g.select('.nv-controlsWrap')
-            .datum(controlsData)
-            .attr('transform', 'translate(0,' + (-margin.top) +')')
-            .call(controls);
-      }
 
       //------------------------------------------------------------
 
@@ -231,7 +178,6 @@ nv.models.multiBarChart = function() {
 
       xAxis
         .scale(x)
-        .tickSize(-availableHeight, 0)
         .rotateLabels(rotateLabels);
 
       g.select('.nv-x.nv-axis')
@@ -240,66 +186,16 @@ nv.models.multiBarChart = function() {
 
       yAxis
         .scale(y)
-        // .ticks()
         .setTickFormat(multibar.expanded() ? d3.format('%') : yAxisTickFormat)
 
       g.select('.nv-y.nv-axis')
           .call(yAxis)
-
-
       //------------------------------------------------------------
-
 
 
       //============================================================
       // Event Handling/Dispatching (in chart's scope)
       //------------------------------------------------------------
-
-      legend.dispatch.on('legendClick', function(d,i) {
-        d.disabled = !d.disabled;
-
-        if (!data.filter(function(d) { return !d.disabled }).length) {
-          data.map(function(d) {
-            d.disabled = false;
-            wrap.selectAll('.nv-series').classed('disabled', false);
-            return d;
-          });
-        }
-
-        state.disabled = data.map(function(d) { return !!d.disabled });
-        dispatch.stateChange(state);
-
-        chart.update()
-      });
-
-      controls.dispatch.on('legendClick', function(d,i) {
-        if (!d.disabled) return;
-
-        controlsData = controlsData.map(function(s) {
-          s.disabled = true;
-          return s;
-        });
-        d.disabled = false;
-        switch (d.key) {
-          case 'Grouped':
-            multibar.style('group')
-            break;
-          case 'Stacked':
-            multibar.style('stack')
-            break;
-          case 'Expanded':
-            multibar.style('expand')
-            break;
-        }
-
-        state.stacked = multibar.stacked();
-        state.expanded = multibar.expanded();
-
-        dispatch.stateChange(state);
-
-        chart.update()
-      });
-
       dispatch.on('tooltipShow', function(e) {
         if (tooltips) showTooltip(e, that.parentNode)
       });
@@ -362,7 +258,6 @@ nv.models.multiBarChart = function() {
   // expose chart's sub-components
   chart.dispatch = dispatch;
   chart.multibar = multibar;
-  chart.legend = legend;
   chart.xAxis = xAxis;
   chart.yAxis = yAxis;
 
@@ -397,42 +292,6 @@ nv.models.multiBarChart = function() {
     return chart;
   };
 
-  chart.showControls = function(_) {
-    if (!arguments.length) return showControls;
-    showControls = _;
-    return chart;
-  };
-
-  chart.showLegend = function(_) {
-    if (!arguments.length) return showLegend;
-    showLegend = _;
-    return chart;
-  };
-
-  chart.reduceXTicks= function(_) {
-    if (!arguments.length) return reduceXTicks;
-    reduceXTicks = _;
-    return chart;
-  };
-
-  chart.rotateLabels = function(_) {
-    if (!arguments.length) return rotateLabels;
-    rotateLabels = _;
-    return chart;
-  }
-
-  chart.staggerLabels = function(_) {
-    if (!arguments.length) return staggerLabels;
-    staggerLabels = _;
-    return chart;
-  };
-
-  chart.tooltip = function(_) {
-    if (!arguments.length) return tooltip;
-    tooltip = _;
-    return chart;
-  };
-
   chart.tooltips = function(_) {
     if (!arguments.length) return tooltips;
     tooltips = _;
@@ -463,12 +322,6 @@ nv.models.multiBarChart = function() {
     return chart;
   };
 
-  chart.numTicks = function(_) {
-    if (!arguments.length) return numTicks;
-    numTicks = _;
-    return chart;
-  };
-
   chart.keyFormatter = function(_) {
     if (!arguments.length) return keyFormatter;
     keyFormatter = _;
@@ -481,7 +334,6 @@ nv.models.multiBarChart = function() {
   };
 
   yAxis.setTickFormat = yAxis.tickFormat;
-
   yAxis.tickFormat = function(_) {
     if (!arguments.length) return yAxisTickFormat;
     yAxisTickFormat = _;

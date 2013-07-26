@@ -50,8 +50,7 @@ nv.models.stackedArea = function() {
 
       //------------------------------------------------------------
       // Setup Scales
-
-      x = scatter.xScale();
+      x = scatter.xScale(d3.time.scale()).xScale();
       y = scatter.yScale();
 
       //------------------------------------------------------------
