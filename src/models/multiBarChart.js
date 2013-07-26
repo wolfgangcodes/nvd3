@@ -238,7 +238,7 @@ nv.models.multiBarChart = function() {
       ;
 
       g.select('.nv-x.nv-axis')
-          .attr('transform', 'translate(0,' + y.range()[0] + ')')
+          .attr('transform', 'translate(0,' + availableHeight + ')')
           .call(xAxis);
 
       var xTicks = g.select('.nv-x.nv-axis > g').selectAll('g');
