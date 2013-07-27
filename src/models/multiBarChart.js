@@ -176,7 +176,8 @@ nv.models.multiBarChart = function() {
       // Setup Axes
 
       xAxis
-        .scale(x);
+        .scale(x)
+        .chart(chart);
 
       g.select('.nv-x.nv-axis')
           .attr('transform', 'translate(0,' + availableHeight + ')')

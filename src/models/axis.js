@@ -13,6 +13,7 @@ nv.models.axis = function(granularity) {
     , ticks = granularity || null
     , yLabelMargin = 35 // This is the amount the left margin to allocate to the use of labels.
     , drawBoxes = true
+    , theChart = null;
     ;
 
   axis
@@ -27,13 +28,13 @@ nv.models.axis = function(granularity) {
   //============================================================
   // Private Variables
   //------------------------------------------------------------
-
+  var bottomMargin = 0;
 
   //============================================================
 
   //TODO: Apply, clip labels, so they don't overwrite chart.
   function chart(selection) {
-
+    bottomMargin = bottomMargin || theChart && theChart.margin().bottom;
     selection.each(function(data) {
       var container = d3.select(this);
 
@@ -97,20 +98,20 @@ nv.models.axis = function(granularity) {
           return nv.utils.calcApproxTextWidth(d3.select(this));
           }).data());
         var barWidth = scale.rangeBand()
-        var shouldRotate = wordWidth >= barWidth
-        // m = chart.margin()
+        var shouldRotate = wordWidth  >= barWidth
+        var m = theChart.margin()
         if(shouldRotate) {
           axis.tickPadding(-5)
           //This 20, may seem magical, but I assure you it is mundane.
           // nv.utils.calcApproxTextWidth does not account for BOLDNESS, so we nudge it here.
           // TODO: patch nv.utils.calcApproxTextWidth to account for boldness, and remove the nudge
-          // m.bottom = wordWidth + 20
+          m.bottom = wordWidth + 20
         }
         else{
           axis.tickPadding(7)
+          m.bottom = bottomMargin
         }
-        // m.bottom = bottomMargin
-        // chart.margin m
+        theChart.margin(m)
         return shouldRotate ? -90 : 0;
       }
 
@@ -203,6 +204,11 @@ nv.models.axis = function(granularity) {
   d3.rebind(chart, axis, 'orient', 'tickValues', 'tickSubdivide', 'tickSize', 'tickPadding', 'tickFormat');
   d3.rebind(chart, scale, 'domain', 'range', 'rangeBand', 'rangeBands'); //these are also accessible by chart.scale(), but added common ones directly for ease of use
 
+  chart.chart = function(_) {
+    if (!arguments.length) return theChart;
+    theChart = _;
+    return chart;
+  };
 
   chart.ticks = function(_) {
     if (!arguments.length) return ticks;
