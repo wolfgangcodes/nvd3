@@ -28,13 +28,15 @@ nv.models.axis = function(granularity) {
   //============================================================
   // Private Variables
   //------------------------------------------------------------
-  var bottomMargin = 0;
+  var bottomMargin = null;
 
   //============================================================
 
   //TODO: Apply, clip labels, so they don't overwrite chart.
   function chart(selection) {
-    bottomMargin = bottomMargin || theChart && theChart.margin().bottom;
+    if(bottomMargin === null){
+      bottomMargin = bottomMargin || theChart && theChart.margin().bottom;
+    }
     selection.each(function(data) {
       var container = d3.select(this);
 
@@ -109,7 +111,7 @@ nv.models.axis = function(granularity) {
         }
         else{
           axis.tickPadding(7)
-          m.bottom = bottomMargin
+          m.bottom = bottomMargin || 0;
         }
         theChart.margin(m)
         return shouldRotate ? -90 : 0;
