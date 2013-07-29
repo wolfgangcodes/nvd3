@@ -127,7 +127,7 @@ nv.models.multiBar = function() {
 
       var _roundDomain = d3.extent(d3.merge(seriesData).map(function(d) { return stacked ? (d.y > 0 ? d.y1 : d.y1 + d.y ) : d.y }).concat(forceY))
       var lastIndex = _roundDomain.length -1
-      _roundDomain[lastIndex] = nv.utils.roundToHalfOrderOfMagnitude(_roundDomain[lastIndex])
+      _roundDomain[lastIndex] = nv.utils.roundToHalfOrderOfMagnitude(_roundDomain[lastIndex], 10)
 
       y.domain(yDomain || _roundDomain)
             .range([availableHeight, 0]);

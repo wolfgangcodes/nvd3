@@ -12,7 +12,6 @@ nv.models.axis = function(granularity) {
     , isOrdinal = false
     , ticks = granularity || null
     , yLabelMargin = 35 // This is the amount the left margin to allocate to the use of labels.
-    , drawBoxes = true
     , theChart = null;
     ;
 
@@ -123,7 +122,7 @@ nv.models.axis = function(granularity) {
         tickLabels.each(function(d,i){
           labelsWidth +=  this.getBBox().width;
         });
-        var wordWidth = tickLabels[0][0] && tickLabels[0][0].getBBox().width || 0;
+        var wordWidth = 10 + tickLabels[0][0] && tickLabels[0][0].getBBox().width || 0;
         var chartWidth = range[range.length-1];
         var shouldRotate = labelsWidth >= chartWidth;
         ;
@@ -143,10 +142,41 @@ nv.models.axis = function(granularity) {
         theChart.margin(m)
         return shouldRotate ? -90 : 0;
       }
+
+      function intersectRect(r1, r2) {
+        return !(r2.left > r1.right ||
+                 r2.right < r1.left ||
+                 r2.top > r1.bottom ||
+                 r2.bottom < r1.top);
+      }
+
       function shouldHide(rotate){
-        //if we rotate, then we can determine how many we need to hide by seeing if the first and second overlap.
-        //if yes, then see if the first and 3rd, then 4th, and so on.  We can then add a .hidden class to the appropriate ones,
-        // bu using .class('hidded', function(d, i){ i % hidden})
+        // We only need to hide if we rotate.
+        if(!rotateLabels) return;
+
+        var prevRect = null;
+        var prevText = null;
+
+        tickLabels.each(function(d, i){
+          var hide = false;
+          var rect = this.getBoundingClientRect();
+
+          if(i === 0){
+            prevRect = this.getBoundingClientRect();
+            prevText = this;
+            d3.select(this).classed('no-show', false);
+            return;
+          }
+
+          if(prevRect){
+            hide = intersectRect(prevRect, rect);
+            d3.select(this).classed('no-show', hide);
+            if(!hide){
+              prevText = this;
+              prevRect = rect;
+            }
+          }
+        });
       }
       //TODO: Make an X Axis, YAxis it will make it cleaner and leaner.
       //ADDR: Axis.orient has nothing to do with where the axis is located.  It just about where to place the labels wrt to the line.
@@ -163,7 +193,6 @@ nv.models.axis = function(granularity) {
             if(width > maxTextWidth) maxTextWidth = width;
           });
 
-          //TODO: Should Rotate?
           var rotateLabels = shouldRotate() || 0;
 
           var anchor = 'middle';
@@ -183,19 +212,20 @@ nv.models.axis = function(granularity) {
             .attr('transform', function(d,i,j) { return 'rotate(' + (rotateLabels) + ',0,0), translate('+(xTranslate)+',0)' })
             .attr('text-anchor', anchor);
 
+          shouldHide(rotateLabels);
+
           break;
         case 'left':
           tickLabels
             .attr('x', function(d){return -yLabelMargin;})
             .attr('text-anchor', 'start');
           lines
-            .attr('x1', -10000 )
-            .attr('x2',  10000 );
+            .attr('x1', -10000)
+            .attr('x2', 10000);
 
 
           //Put boxes around things, but only if we need to.  The first time after a scale update.
-          //TODO: figure out how to do this without drawBoxes variable, this will be better
-          if(drawBoxes){
+          if(!d3.select('.nvd3-text-background')[0][0]){
             g.selectAll('g').each(function(d, thing){
               var buffer = 1;
               var group = d3.select(this);
@@ -209,7 +239,6 @@ nv.models.axis = function(granularity) {
               .attr("height", SVGRect.height)
             });
           }
-          drawBoxes = false;
           break;
       }
 
@@ -255,7 +284,6 @@ nv.models.axis = function(granularity) {
     axis.scale(scale);
     isOrdinal = typeof scale.rangeBands === 'function';
     d3.rebind(chart, scale, 'domain', 'range', 'rangeBand', 'rangeBands');
-    drawBoxes = true;
     return chart;
   }
 

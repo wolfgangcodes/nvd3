@@ -121,9 +121,10 @@ nv.utils.roundToOrderOfMagnitude = function(x){
   return Math.pow(10 ,  Math.ceil( Math.log(x)/Math.LN10 ) );
 }
 
-nv.utils.roundToHalfOrderOfMagnitude = function(x){
+nv.utils.roundToHalfOrderOfMagnitude = function(x, part){
+  part = part || 2
   var oom = Math.pow(10, ((x + '').length -1) );
-  var big = oom + oom/2;
+  var big = oom + oom/10;
   var bigger = Math.ceil(x / oom) * oom;
   var ret = x > big ? bigger : big;
   return ret;
