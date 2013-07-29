@@ -122,10 +122,14 @@ nv.models.multiBar = function() {
               })
             });
 
-      x   .domain(d3.merge(seriesData).map(function(d) { return d.x }))
+      x.domain(d3.merge(seriesData).map(function(d) { return d.x }))
           .rangeBands([0, availableWidth], .1);
 
-      y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return stacked ? (d.y > 0 ? d.y1 : d.y1 + d.y ) : d.y }).concat(forceY)))
+      var _roundDomain = d3.extent(d3.merge(seriesData).map(function(d) { return stacked ? (d.y > 0 ? d.y1 : d.y1 + d.y ) : d.y }).concat(forceY))
+      var lastIndex = _roundDomain.length -1
+      _roundDomain[lastIndex] = nv.utils.roundToHalfOrderOfMagnitude(_roundDomain[lastIndex])
+
+      y.domain(yDomain || _roundDomain)
             .range([availableHeight, 0]);
 
       // If scale's domain don't have a range, slightly adjust to make one... so a chart can show a single data point

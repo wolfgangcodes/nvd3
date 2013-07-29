@@ -172,6 +172,8 @@ nv.models.stackedAreaChart = function(granularity) {
       // Setup Axes
       xAxis
         .scale(x)
+        .chart(chart);
+
       g.select('.nv-x.nv-axis')
           .attr('transform', 'translate(0,' + availableHeight + ')')
           .call(xAxis);
@@ -179,7 +181,9 @@ nv.models.stackedAreaChart = function(granularity) {
       yAxis
         .scale(y)
         .ticks(stacked.offset() == 'wiggle' ? 0 : (numTicks ? numTicks : availableHeight / 36))
-        .setTickFormat(stacked.offset() == 'expand' ? d3.format('%') : yAxisTickFormat);
+        .setTickFormat(stacked.offset() == 'expand' ? d3.format('%') : yAxisTickFormat)
+        .chart(chart);
+
 
       g.select('.nv-y.nv-axis')
           .call(yAxis)
@@ -260,13 +264,13 @@ nv.models.stackedAreaChart = function(granularity) {
   };
 
   chart.width = function(_) {
-    if (!arguments.length) return getWidth;
+    if (!arguments.length) return width;
     width = _;
     return chart;
   };
 
   chart.height = function(_) {
-    if (!arguments.length) return getHeight;
+    if (!arguments.length) return height;
     height = _;
     return chart;
   };

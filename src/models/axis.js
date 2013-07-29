@@ -117,7 +117,37 @@ nv.models.axis = function(granularity) {
         return shouldRotate ? -90 : 0;
       }
 
-      function shouldRotateTime(){}
+      function shouldRotateTime(){
+        var range = scale.range();
+        var labelsWidth = 0;
+        tickLabels.each(function(d,i){
+          labelsWidth +=  this.getBBox().width;
+        });
+        var wordWidth = tickLabels[0][0] && tickLabels[0][0].getBBox().width || 0;
+        var chartWidth = range[range.length-1];
+        var shouldRotate = labelsWidth >= chartWidth;
+        ;
+        var m = theChart.margin()
+        //TODO: dy = .25 if rotated, .75 otherwise? Conirm visuals.
+        if(shouldRotate) {
+          axis.tickPadding(-5)
+          //This 20, may seem magical, but I assure you it is mundane.
+          // nv.utils.calcApproxTextWidth does not account for BOLDNESS, so we nudge it here.
+          // TODO: patch nv.utils.calcApproxTextWidth to account for boldness, and remove the nudge
+          m.bottom = wordWidth + 20
+        }
+        else{
+          axis.tickPadding(7)
+          m.bottom = bottomMargin || 0;
+        }
+        theChart.margin(m)
+        return shouldRotate ? -90 : 0;
+      }
+      function shouldHide(rotate){
+        //if we rotate, then we can determine how many we need to hide by seeing if the first and second overlap.
+        //if yes, then see if the first and 3rd, then 4th, and so on.  We can then add a .hidden class to the appropriate ones,
+        // bu using .class('hidded', function(d, i){ i % hidden})
+      }
       //TODO: Make an X Axis, YAxis it will make it cleaner and leaner.
       //ADDR: Axis.orient has nothing to do with where the axis is located.  It just about where to place the labels wrt to the line.
       switch (axis.orient()) {
@@ -159,8 +189,9 @@ nv.models.axis = function(granularity) {
             .attr('x', function(d){return -yLabelMargin;})
             .attr('text-anchor', 'start');
           lines
-            .attr('x1', -10000)
-            .attr('x2', 10000)
+            .attr('x1', -10000 )
+            .attr('x2',  10000 );
+
 
           //Put boxes around things, but only if we need to.  The first time after a scale update.
           //TODO: figure out how to do this without drawBoxes variable, this will be better

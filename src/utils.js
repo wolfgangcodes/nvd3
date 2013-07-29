@@ -104,7 +104,7 @@ nv.utils.pjax = function(links, content) {
 }
 
 /* For situations where we want to approximate the width in pixels for an SVG:text element.
-Most common instance is when the element is in a display:none; container. 
+Most common instance is when the element is in a display:none; container.
 Forumla is : text.length * font-size * constant_factor
 */
 nv.utils.calcApproxTextWidth = function (svgTextElem) {
@@ -112,7 +112,19 @@ nv.utils.calcApproxTextWidth = function (svgTextElem) {
         var fontSize = parseInt(svgTextElem.style("font-size").replace("px",""));
         var textLength = svgTextElem.text().length;
 
-        return textLength * fontSize * 0.5; 
+        return textLength * fontSize * 0.5;
     }
     return 0;
-};
+}
+
+nv.utils.roundToOrderOfMagnitude = function(x){
+  return Math.pow(10 ,  Math.ceil( Math.log(x)/Math.LN10 ) );
+}
+
+nv.utils.roundToHalfOrderOfMagnitude = function(x){
+  var oom = Math.pow(10, ((x + '').length -1) );
+  var big = oom + oom/2;
+  var bigger = Math.ceil(x / oom) * oom;
+  var ret = x > big ? bigger : big;
+  return ret;
+}
