@@ -186,7 +186,8 @@ nv.models.multiBarChart = function() {
       yAxis
         .scale(y)
         .setTickFormat(multibar.expanded() ? d3.format('%') : yAxisTickFormat)
-        .chart(chart);
+        .chart(chart)
+        .axis.ticks( Math.ceil(availableHeight/nv.utils.MAGIC_NUMBER));
 
 
       g.select('.nv-y.nv-axis')

@@ -117,15 +117,16 @@ nv.utils.calcApproxTextWidth = function (svgTextElem) {
     return 0;
 }
 
-nv.utils.roundToOrderOfMagnitude = function(x){
-  return Math.pow(10 ,  Math.ceil( Math.log(x)/Math.LN10 ) );
+nv.utils.cleanRound = function (x){
+  var l = (''+x).length - 1;
+  var pow = Math.pow(10, l);
+  var bump = pow/10;
+  var cleanX = Math.floor(x/pow) * pow;
+  while(cleanX < x ){
+    cleanX += bump;
+  }
+  return cleanX;
 }
 
-nv.utils.roundToHalfOrderOfMagnitude = function(x, part){
-  part = part || 2
-  var oom = Math.pow(10, ((x + '').length -1) );
-  var big = oom + oom/10;
-  var bigger = Math.ceil(x / oom) * oom;
-  var ret = x > big ? bigger : big;
-  return ret;
-}
+
+nv.utils.MAGIC_NUMBER = 55; // This is the number of pixels to divide by if you don't have a better strat.

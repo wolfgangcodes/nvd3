@@ -99,7 +99,7 @@ nv.models.axis = function(granularity) {
           return nv.utils.calcApproxTextWidth(d3.select(this));
           }).data());
         var barWidth = scale.rangeBand()
-        var shouldRotate = wordWidth  >= barWidth
+        var shouldRotate = (wordWidth + 15)  >= barWidth
         var m = theChart.margin()
         if(shouldRotate) {
           axis.tickPadding(-5)
@@ -122,7 +122,7 @@ nv.models.axis = function(granularity) {
         tickLabels.each(function(d,i){
           labelsWidth +=  this.getBBox().width;
         });
-        var wordWidth = 10 + tickLabels[0][0] && tickLabels[0][0].getBBox().width || 0;
+        var wordWidth = 30 + tickLabels[0][0] && tickLabels[0][0].getBBox().width || 0;
         var chartWidth = range[range.length-1];
         var shouldRotate = labelsWidth >= chartWidth;
         ;
@@ -269,12 +269,6 @@ nv.models.axis = function(granularity) {
   chart.chart = function(_) {
     if (!arguments.length) return theChart;
     theChart = _;
-    return chart;
-  };
-
-  chart.ticks = function(_) {
-    if (!arguments.length) return ticks;
-    ticks = _;
     return chart;
   };
 

@@ -91,7 +91,7 @@ nv.models.scatter = function() {
 
       var _roundDomain = d3.extent(seriesData.map(function(d) { return d.y }).concat(forceY));
       var lastIndex = _roundDomain.length -1
-      _roundDomain[lastIndex] = nv.utils.roundToHalfOrderOfMagnitude(_roundDomain[lastIndex], 10)
+      _roundDomain[lastIndex] = nv.utils.cleanRound(_roundDomain[lastIndex])
 
       y   .domain(yDomain || _roundDomain)
           .range([availableHeight, 0]);

@@ -180,9 +180,10 @@ nv.models.stackedAreaChart = function(granularity) {
 
       yAxis
         .scale(y)
-        .ticks(stacked.offset() == 'wiggle' ? 0 : (numTicks ? numTicks : availableHeight / 36))
-        .setTickFormat(stacked.offset() == 'expand' ? d3.format('%') : yAxisTickFormat)
-        .chart(chart);
+        .setTickFormat(stacked.offset() === 'expand' ? d3.format('%') : yAxisTickFormat)
+        .chart(chart)
+        .axis.ticks(stacked.offset() === 'wiggle' ? 0 : Math.ceil(availableHeight/nv.utils.MAGIC_NUMBER));
+
 
 
       g.select('.nv-y.nv-axis')
