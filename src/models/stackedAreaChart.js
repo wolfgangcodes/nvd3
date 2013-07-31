@@ -86,7 +86,7 @@ nv.models.stackedAreaChart = function(granularity) {
           availableHeight = (height || parseInt(container.style('height')) || 400)
                              - margin.top - margin.bottom;
 
-      chart.update = function() { chart(selection) };
+      chart.update = function() { return chart(selection) };
       chart.container = this;
 
       //set state.disabled
@@ -183,8 +183,6 @@ nv.models.stackedAreaChart = function(granularity) {
         .setTickFormat(stacked.offset() === 'expand' ? d3.format('%') : yAxisTickFormat)
         .chart(chart)
         .axis.ticks(stacked.offset() === 'wiggle' ? 0 : Math.ceil(availableHeight/nv.utils.MAGIC_NUMBER));
-
-
 
       g.select('.nv-y.nv-axis')
           .call(yAxis)

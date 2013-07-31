@@ -36,6 +36,7 @@ nv.models.axis = function(granularity) {
     if(bottomMargin === null){
       bottomMargin = bottomMargin || theChart && theChart.margin().bottom;
     }
+
     selection.each(function(data) {
       var container = d3.select(this);
 
