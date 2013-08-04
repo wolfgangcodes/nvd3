@@ -94,7 +94,6 @@ nv.models.axis = function(granularity) {
             return false;
         }
       }
-
       function shouldRotateOrdinal(){
         var wordWidth = d3.max(tickLabels.map(function(item, i){
           return nv.utils.calcApproxTextWidth(d3.select(this));
@@ -116,17 +115,16 @@ nv.models.axis = function(granularity) {
         theChart.margin(m)
         return shouldRotate ? -90 : 0;
       }
-
       function shouldRotateTime(){
         var range = scale.range();
-        var labelsWidth = 0;
+        var buffer = 20;
+        var labelsWidth = buffer;
         tickLabels.each(function(d,i){
-          labelsWidth +=  this.getBBox().width;
+          labelsWidth +=  buffer + this.getBBox().width;
         });
-        var wordWidth = 30 + tickLabels[0][0] && tickLabels[0][0].getBBox().width || 0;
+        var wordWidth = 20 + tickLabels[0][0] && tickLabels[0][0].getBBox().width || 0;
         var chartWidth = range[range.length-1];
         var shouldRotate = labelsWidth >= chartWidth;
-        ;
         var m = theChart.margin()
         //TODO: dy = .25 if rotated, .75 otherwise? Conirm visuals.
         if(shouldRotate) {
@@ -143,14 +141,12 @@ nv.models.axis = function(granularity) {
         theChart.margin(m)
         return shouldRotate ? -90 : 0;
       }
-
       function intersectRect(r1, r2) {
         return !(r2.left > r1.right ||
                  r2.right < r1.left ||
                  r2.top > r1.bottom ||
                  r2.bottom < r1.top);
       }
-
       function shouldHide(rotate){
         // We only need to hide if we rotate.
         if(!rotateLabels) return;
@@ -225,21 +221,23 @@ nv.models.axis = function(granularity) {
             .attr('x2', 10000);
 
 
-          //Put boxes around things, but only if we need to.  The first time after a scale update.
-          if(!d3.select('.nvd3-text-background')[0][0]){
-            g.selectAll('g').each(function(d, thing){
-              var buffer = 1;
-              var group = d3.select(this);
-              var text = group.select('.tick-label');
-              var SVGRect = text[0][0].getBBox();
-              var rect = group.insert("rect", '.tick-label');
-              rect.attr("class", "nvd3-text-background")
-              .attr("x", SVGRect.x - buffer )
-              .attr("y", SVGRect.y)
+          //Put boxes around things, but only if we need to.
+          g.selectAll('g').each(function(d, thing){
+            var buffer = 8;
+            var group = d3.select(this);
+            var text = group.select('.tick-label');
+            var SVGRect = text[0][0].getBBox();
+            var rect = group.select('.nvd3-text-background');
+            if(!rect[0][0]){
+             rect =  group.insert("rect", '.tick-label')
+              .classed("nvd3-text-background", true)
               .attr("width", SVGRect.width + 2 * buffer)
-              .attr("height", SVGRect.height)
-            });
-          }
+              .attr("height", SVGRect.height);
+            }
+            rect.attr("x", SVGRect.x - buffer )
+            .attr("y", SVGRect.y)
+
+          });
           break;
       }
 
@@ -252,7 +250,6 @@ nv.models.axis = function(granularity) {
           .filter(function(d) { return !parseFloat(Math.round(d*100000)/1000000) }) //this is because sometimes the 0 tick is a very small fraction, TODO: think of cleaner technique
             .classed('zero', true);
     });
-
     return chart;
   }
 

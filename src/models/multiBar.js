@@ -415,6 +415,10 @@ nv.models.multiBar = function() {
         chart.stacked(true);
         chart.expanded(true);
         break;
+      default:
+        chart.stacked(true);
+        chart.expanded(false);
+        break;
     }
 
     return chart;

@@ -118,9 +118,10 @@ nv.utils.calcApproxTextWidth = function (svgTextElem) {
 }
 
 nv.utils.cleanRound = function (x){
+  x = Math.ceil(x) || 0;
   var l = (''+x).length - 1;
   var pow = Math.pow(10, l);
-  var bump = pow/10;
+  var bump = Math.max(pow/10, 5);
   var cleanX = Math.floor(x/pow) * pow;
   while(cleanX < x ){
     cleanX += bump;

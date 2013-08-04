@@ -61,6 +61,7 @@ nv.models.multiBarChart = function() {
 
     opts.left = e.pos[0] + ( offsetElement.offsetLeft || 0 );
     opts.top = e.pos[1] + ( offsetElement.offsetTop || 0);
+    //Here we don't want to blindly call the xAxis formatter.
     opts.x = multibar.x()(e.point, e.pointIndex);
     var y = multibar.stacked() && multibar.expanded() ? e.point._y : multibar.y()(e.point, e.pointIndex)
     opts.y = keyValueFormatter(y);
