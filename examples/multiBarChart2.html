@@ -53,14 +53,13 @@ nv.addGraph(function() {
     chart.multibar
       .hideable(true);
 
-    chart.tooltip(function (opts){
+    chart.tooltipContent(function (opts){
       console.log(opts)
       return opts.data.key +' : '+ opts.y +' on '+opts.x;
     });
     chart.stacked(true)
     chart.x(function(d){return d.x})
     chart.y(function(d){return d.y})
-    chart.showControls(true)
     chart.delay(0)
 
     d3.select('#chart1 svg')

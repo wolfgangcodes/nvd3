@@ -194,11 +194,13 @@ nv.models.axis = function(granularity) {
 
           var anchor = 'middle';
           if(rotateLabels === 0){
-            anchor = 'middle'
-            xTranslate = 0
+            anchor = 'middle';
+            xTranslate = 0;
+            yTranslate = '.71em';
           }else{
             anchor = rotateLabels%360 > 0 ? 'start' : 'end'
-            xTranslate = -5
+            xTranslate = -5;
+            yTranslate = '.25em';
           }
 
           //Convert to radians before calculating sin. Add 30 to margin for healthy padding.
@@ -207,8 +209,8 @@ nv.models.axis = function(granularity) {
 
           tickLabels
             .attr('transform', function(d,i,j) { return 'rotate(' + (rotateLabels) + ',0,0), translate('+(xTranslate)+',0)' })
-            .attr('text-anchor', anchor);
-
+            .attr('text-anchor', anchor)
+            .attr('dy', yTranslate);
           shouldHide(rotateLabels);
 
           break;
