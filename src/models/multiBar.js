@@ -274,21 +274,22 @@ nv.models.multiBar = function() {
       }
 
 
-      if (stacked)
+      if (stacked){
             bars
-
             .attr('y', function(d,i) {
 
               return y((stacked ? d.y1 : 0));
             })
             .attr('height', function(d,i) {
-              return Math.max(Math.abs(y(d.y + (stacked ? d.y0 : 0)) - y((stacked ? d.y0 : 0))),1);
+              var h = d._y == 0 ? 0 :Math.abs(y(d.y + (stacked ? d.y0 : 0)) - y((stacked ? d.y0 : 0)))
+              return h;
             })
             .attr('x', function(d,i) {
                   return stacked ? 0 : (d.series * x.rangeBand() / data.length )
                 })
             .attr('width', x.rangeBand() / (stacked ? 1 : data.length) );
-      else
+      }
+      else {
             bars
             .attr('x', function(d,i) {
               return d.series * x.rangeBand() / data.length
@@ -302,9 +303,9 @@ nv.models.multiBar = function() {
                           y(getY(d,i)) || 0;
               })
             .attr('height', function(d,i) {
-                  return Math.max(Math.abs(y(getY(d,i)) - y(0)),1) || 0;
+                  return Math.abs(y(getY(d,i)) - y(0)) || 0;
                 });
-
+      }
       //store old scales for use in transitions on update
       x0 = x.copy();
       y0 = y.copy();
