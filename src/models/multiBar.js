@@ -59,6 +59,10 @@ nv.models.multiBar = function() {
       data = data.map(function(series, i) {
         series.values = series.values.map(function(point) {
           point.series = i;
+          if(point._y === undefined){
+            point._y = getY(point);
+          }
+          point.y = point._y
           return point;
         });
         return series;
@@ -113,12 +117,7 @@ nv.models.multiBar = function() {
       var seriesData = (xDomain && yDomain) ? [] : // if we know xDomain and yDomain, no need to calculate
             data.map(function(d) {
               return d.values.map(function(d,i) {
-                if(d._y === undefined)
-                  d._y = getY(d);
-                if(!expanded)
-                  d.y = d._y
-
-                return { x: getX(d,i), y: getY(d,i), y0: d.y0, y1: d.y1 }
+                return { x: getX(d,i), y: d.y, y0: d.y0, y1: d.y1 };
               })
             });
 

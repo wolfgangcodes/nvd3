@@ -88,7 +88,6 @@ nv.models.multiBarChart = function() {
           availableHeight = (height || parseInt(container.style('height')) || 400)
                              - margin.top - margin.bottom;
 
-      // chart.update = function() { selection.transition().call(chart); };
       chart.update = function() { selection.call(chart) };
       chart.container = this;
 
