@@ -108,7 +108,7 @@ Most common instance is when the element is in a display:none; container.
 Forumla is : text.length * font-size * constant_factor
 */
 nv.utils.calcApproxTextWidth = function (svgTextElem) {
-     if (typeof svgTextElem.style === 'function') {
+     if (svgTextElem.style && typeof svgTextElem.style === 'function') {
         var fontSize = parseInt(svgTextElem.style("font-size").replace("px",""));
         var textLength = svgTextElem.text().length;
 

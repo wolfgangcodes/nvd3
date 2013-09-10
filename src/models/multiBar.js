@@ -262,7 +262,7 @@ nv.models.multiBar = function() {
             d3.event.stopPropagation();
           });
       bars
-          .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'})
+          .attr('class', function(d,i) { return ('key-name-'+d.x+' ').toLowerCase()+ (getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive') })
           .attr('transform', function(d,i) { return 'translate(' + x(getX(d,i)) + ',0)'; })
 
       if (barColor) {

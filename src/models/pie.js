@@ -36,7 +36,7 @@ nv.models.pie = function() {
       var availableWidth = width - margin.left - margin.right,
           availableHeight = height - margin.top - margin.bottom,
           radius = Math.min(availableWidth, availableHeight) / 2,
-          arcRadius = radius-(radius / 5),
+          arcRadius = radius,
           container = d3.select(this);
 
 
@@ -52,10 +52,13 @@ nv.models.pie = function() {
       gEnter.append('g').attr('class', 'nv-pie');
 
       wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-      g.select('.nv-pie').attr('transform', 'translate(' + availableWidth / 2 + ',' + availableHeight / 2 + ')');
+      var pieWrap = g.select('.nv-pie').attr('transform', 'translate(' + availableWidth / 2 + ',' + availableHeight / 2 + ')');
       var donutHole = wrap.selectAll('.nv-donutHoleLabel').data([donutHoleLabel]);
 
       if(showDonutHoleLabel){
+        pieWrap.append('circle')
+          .attr('class', 'munchkin')
+          .attr('r', radius * donutRatio)
         donutHole.enter().append('text')
           .attr('class', 'nvd3 nv-donutHoleLabel')
           .attr('dy', '.5em')
