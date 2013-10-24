@@ -23,6 +23,14 @@ nv.models.axis = function(granularity) {
 
   //============================================================
 
+  var boundingBox = {}
+  var getBBox = function(element) {
+    var name = element.textContent;
+    if(!boundingBox[name]){
+      boundingBox[name] = element.getBBox();
+    }
+    return boundingBox[name];
+  }
 
   //============================================================
   // Private Variables
@@ -120,9 +128,9 @@ nv.models.axis = function(granularity) {
         var buffer = 20;
         var labelsWidth = buffer;
         tickLabels.each(function(d,i){
-          labelsWidth +=  buffer + this.getBBox().width;
+          labelsWidth +=  buffer + getBBox(this).width;
         });
-        var wordWidth = 20 + tickLabels[0][0] && tickLabels[0][0].getBBox().width || 0;
+        var wordWidth = 20 + tickLabels[0][0] && getBBox(tickLabels[0][0]).width || 0;
         var chartWidth = range[range.length-1];
         var shouldRotate = labelsWidth >= chartWidth;
         var m = theChart.margin()
@@ -186,7 +194,7 @@ nv.models.axis = function(granularity) {
 
           //Calculate the longest xTick width
           tickLabels.each(function(d,i){
-            var width = this.getBBox().width;
+            var width = getBBox(this).width;
             if(width > maxTextWidth) maxTextWidth = width;
           });
 
@@ -228,7 +236,7 @@ nv.models.axis = function(granularity) {
             var buffer = 8;
             var group = d3.select(this);
             var text = group.select('.tick-label');
-            var SVGRect = text[0][0].getBBox();
+            var SVGRect = getBBox(text[0][0]);
             var rect = group.select('.nvd3-text-background');
             if(!rect[0][0]){
              rect =  group.insert("rect", '.tick-label')
