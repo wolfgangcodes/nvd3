@@ -41,7 +41,7 @@ text {
 
 
 var histcatexplong = [{"key":"users","values":[]},{"key":"sessions","values":[]}]
-var data = [
+var data1 = [
     {
         "key": "cn",
         "metricName": "Users",
@@ -54,7 +54,7 @@ var data = [
             },
             {
                 "x": "2013-06-28T00:00:00Z",
-                "y": 5,
+                "y": -5,
                 "dimensionTotal": 61
             },
             {
@@ -64,7 +64,7 @@ var data = [
             },
             {
                 "x": "2013-06-30T00:00:00Z",
-                "y": 2,
+                "y": 0,
                 "dimensionTotal": 25
             }
         ],
@@ -83,17 +83,86 @@ var data = [
             },
             {
                 "x": "2013-06-28T00:00:00Z",
-                "y": 0,
+                "y": 10,
                 "dimensionTotal": 61
             },
             {
                 "x": "2013-06-29T00:00:00Z",
-                "y": 2,
+                "y": 0,
                 "dimensionTotal": 25
             },
             {
                 "x": "2013-06-30T00:00:00Z",
                 "y": 0,
+                "dimensionTotal": 25
+            }
+        ],
+        "seriesTotal": 40
+    }
+]
+var data = [
+    {
+        "key": "cn",
+        "metricName": "Users",
+        "displayName": "China",
+        "values": [
+            {
+                "x": "2013-06-26T00:00:00Z",
+                "y": 7,
+                "dimensionTotal": 69
+            },
+            {
+                "x": "2013-06-27T00:00:00Z",
+                "y": 0,
+                "dimensionTotal": 69
+            },
+            {
+                "x": "2013-06-28T00:00:00Z",
+                "y":  -15,
+                "dimensionTotal": 61
+            },
+            {
+                "x": "2013-06-29T00:00:00Z",
+                "y": -3,
+                "dimensionTotal": 25
+            },
+            {
+                "x": "2013-06-30T00:00:00Z",
+                "y": 6,
+                "dimensionTotal": 25
+            }
+        ],
+        "seriesTotal": 154
+    },
+    {
+        "key": "ch",
+        "metricName": "Users",
+        "displayName": "Switzerland",
+        "values": [
+
+            {
+                "x": "2013-06-26T00:00:00Z",
+                "y": 1,
+                "dimensionTotal": 69
+            },
+            {
+                "x": "2013-06-27T00:00:00Z",
+                "y": 0,
+                "dimensionTotal": 0
+            },
+            {
+                "x": "2013-06-28T00:00:00Z",
+                "y": -10,
+                "dimensionTotal": 61
+            },
+            {
+                "x": "2013-06-29T00:00:00Z",
+                "y": 5,
+                "dimensionTotal": 25
+            },
+            {
+                "x": "2013-06-30T00:00:00Z",
+                "y": -3,
                 "dimensionTotal": 25
             }
         ],
@@ -133,11 +202,9 @@ nv.addGraph(function() {
   chart.yAxis
       .tickFormat(d3.format(',.2f'));
 
-  chart.yAxis.showMaxMin(false);
-  chart.numTicks(5);
   chart.stacked.clipRadius(100000000)
-  // chart.style("line")
-  // chart.forceY([0,20000])
+  chart.style("expand")
+  chart.forceY([-200,200])
   // chart.yDomain([0,20000])
   d3.select('#chart1')
     .datum(data)
@@ -147,7 +214,7 @@ nv.addGraph(function() {
 
   nv.utils.windowResize(chart.update);
 
-  chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+  // chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
 
   return chart;
 });

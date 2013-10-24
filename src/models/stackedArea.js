@@ -52,9 +52,9 @@ nv.models.stackedArea = function() {
       // Setup Scales
       x = scatter.xScale(d3.time.scale()).xScale();
       y = scatter.yScale();
-
       //------------------------------------------------------------
-
+      var extents = d3.extent([].concat.apply([], data.map(function(obj){ return obj.disabled ? [] : obj.values;})), getY);
+      extents[0] = extents[0] < 0 ? -nv.utils.cleanRound(Math.abs(extents[0])) : 0;
 
       // Injecting point index into each point because d3.layout.stack().out does not give index
       // ***Also storing getY(d,i) as stackedY so that it can be set to 0 if series is disabled
@@ -70,15 +70,46 @@ nv.models.stackedArea = function() {
                return aseries;
              });
 
+      scatter.forceY(extents);
+      negativeOffset = null;
       if(offset === 'expand'){
-        scatter.yDomain([0,1]);
+        negativeOffset =  function(data) {
+            var n = data.length,
+            m = data[0].length,
+            k = 1 / n,
+            i,
+            j,
+            o,
+            y0 = [];
+            for (j = 0; j < m; ++j) y0[j] = 0;
+            for (j = 0; j < m; ++j) {
+                for (i = 0, o = 0; i < n; i++){
+                  o += Math.abs(data[i][j][1]);
+                }
+                total = o;
+                for (i = 0; i < n; i++){
+                  if (o != 0) {
+                   data[i][j][1] /= o;
+                   y0[j] = Math.min(y0[j], data[i][j][1]/total);
+                 }else{
+                  data[i][j][1] = 0;
+                }
+              }
+            }
+            return y0;
+        }
+        if(extents[0] < 0 ){
+            scatter.yDomain([-1,1]);
+        }else{
+          scatter.yDomain([0,1]);
+       }
       }else{
         scatter.yDomain(_yDomain);
       }
       if(offset !== 'line'){
         data = d3.layout.stack()
                  .order(order)
-                 .offset(offset)
+                 .offset(negativeOffset || offset)
                  .values(function(d) { return d.values })  //TODO: make values customizeable in EVERY model in this fashion
                  .x(getX)
                  .y(function(d) { return d.stackedY })
