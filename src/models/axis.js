@@ -32,6 +32,19 @@ nv.models.axis = function(granularity) {
     return boundingBox[name];
   }
 
+  var clientRect = {}
+  var getBoundingClientRect = function(element) {
+    var name = element.textContent;
+    var rect = clientRect[name];
+    if(!rect){
+      rect = element.getBoundingClientRect();
+      if(rect.width != 0 && rect.height != 0){
+        clientRect[name] = rect;
+      }
+    }
+    return rect;
+  }
+
   //============================================================
   // Private Variables
   //------------------------------------------------------------
@@ -164,10 +177,9 @@ nv.models.axis = function(granularity) {
 
         tickLabels.each(function(d, i){
           var hide = false;
-          var rect = this.getBoundingClientRect();
-
+          var rect = getBoundingClientRect(this)
           if(i === 0){
-            prevRect = this.getBoundingClientRect();
+            prevRect = rect
             prevText = this;
             d3.select(this).classed('no-show', false);
             return;
