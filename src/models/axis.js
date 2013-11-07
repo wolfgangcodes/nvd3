@@ -78,16 +78,16 @@ nv.models.axis = function(granularity) {
             break;
           case 'hour':
             //TODO, here is where we decide how many to show.
-            axis.ticks(d3.time.hours, 1)
+            axis.ticks(d3.time.hours.utc, 1)
             break;
           case 'day':
-            axis.ticks(d3.time.days, 1)
+            axis.ticks(d3.time.days.utc, 1)
             break;
           case 'week':
-            axis.ticks(d3.time.mondays, 1)
+            axis.ticks(d3.time.mondays.utc, 1)
             break;
           case 'month':
-            axis.ticks(d3.time.months, 1)
+            axis.ticks(d3.time.months.utc, 1)
             break;
           default:
             console.log('Unknown granularity for axis', granularity);
