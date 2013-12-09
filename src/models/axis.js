@@ -33,9 +33,9 @@ nv.models.axis = function(granularity) {
   }
 
   var clientRect = {}
-  var getBoundingClientRect = function(element) {
+  var getBoundingClientRect = function(element, idx) {
     var name = element.textContent;
-    var rect = clientRect[name];
+    var rect = clientRect[name+idx];
     if(!rect){
       rect = element.getBoundingClientRect();
       if(rect.width != 0 && rect.height != 0){
@@ -162,22 +162,17 @@ nv.models.axis = function(granularity) {
         theChart.margin(m)
         return shouldRotate ? -90 : 0;
       }
-      function intersectRect(r1, r2) {
-        return !(r2.left > r1.right ||
-                 r2.right < r1.left ||
-                 r2.top > r1.bottom ||
-                 r2.bottom < r1.top);
+      function overlap(r1, r2) {
+        return (r1.left + r1.width) > r2.left
       }
       function shouldHide(rotate){
-        // We only need to hide if we rotate.
-        if(!rotateLabels) return;
-
         var prevRect = null;
         var prevText = null;
 
         tickLabels.each(function(d, i){
           var hide = false;
-          var rect = getBoundingClientRect(this)
+          var rect = getBoundingClientRect(this, i)
+          console.log (i, rect, this)
           if(i === 0){
             prevRect = rect
             prevText = this;
@@ -186,7 +181,7 @@ nv.models.axis = function(granularity) {
           }
 
           if(prevRect){
-            hide = intersectRect(prevRect, rect);
+            hide = overlap(prevRect, rect);
             d3.select(this).classed('no-show', hide);
             if(!hide){
               prevText = this;
