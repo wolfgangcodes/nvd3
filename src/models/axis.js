@@ -166,13 +166,14 @@ nv.models.axis = function(granularity) {
         return (r1.left + r1.width) > r2.left
       }
       function shouldHide(rotate){
+        if(!rotateLabels) return;
+
         var prevRect = null;
         var prevText = null;
 
         tickLabels.each(function(d, i){
           var hide = false;
           var rect = getBoundingClientRect(this, i)
-          console.log (i, rect, this)
           if(i === 0){
             prevRect = rect
             prevText = this;
